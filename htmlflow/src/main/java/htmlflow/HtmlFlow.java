@@ -156,4 +156,15 @@ public class HtmlFlow {
         PreprocessingVisitorAsync pre = preprocessingAsync(template, isIndented);
         return new HtmlViewAsync<>(new HtmlViewVisitorAsync(isIndented, pre.getFirst()), template, threadSafe);
     }
+
+    public static HtmlMfe mfe(HtmlTemplate template, String customTagName) {
+        return HtmlFlow.mfe(template, "test", false, customTagName);
+    }
+
+    static HtmlMfe mfe(HtmlTemplate template, String identifier, boolean isIndented, String customTagName) {
+        PreprocessingVisitor pre = preprocessing(template, isIndented);
+        return new HtmlMfe(identifier, new HtmlViewVisitor(new StringBuilder(), isIndented, pre.getFirst()), customTagName);
+    }
+
+
 }

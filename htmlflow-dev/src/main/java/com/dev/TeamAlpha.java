@@ -10,8 +10,8 @@ import htmlflow.HtmlFlow;
 
 import java.io.StringWriter;
 
-@Path("/html")
-public class HtmlResource {
+@Path("/resource_alpha")
+public class TeamAlpha {
 
     @GET
     @Produces(MediaType.TEXT_HTML)
@@ -23,7 +23,7 @@ public class HtmlResource {
                 .title().text("Quarkus HTML Demo").__()
                 .__() // close head
                 .body()
-                .p().text("Hello from Quarkus with HtmlFlow!").__()
+                .p().text("Hello from team ALPHA").__()
                 .__(); // close html
         return Response.ok(writer.toString()).build();
     }
