@@ -44,6 +44,7 @@ import org.xmlet.htmlapifaster.Source;
 import org.xmlet.htmlapifaster.Text;
 
 import java.io.IOException;
+import java.util.function.BiConsumer;
 
 import static htmlflow.visitor.Tags.*;
 
@@ -198,6 +199,12 @@ public abstract class HtmlVisitor extends ElementVisitor {
         newlineAndIndent();
         write(HtmlEscapers.htmlEscaper().escape(text.getValue()));
     }
+
+    @Override
+    public <E extends Element, U> void visitMfe(E element, BiConsumer<E, U> consumer) {
+
+    }
+
     /**
      * To distinguish from text() that escapes HTML by default.
      * This raw() acts like text() but keeping text as it is.
@@ -207,6 +214,8 @@ public abstract class HtmlVisitor extends ElementVisitor {
         newlineAndIndent();
         write(text.getValue());
     }
+
+//    public abstract <E extends Element, U> void visitMfe(E element, BiConsumer<E, U> consumer);
 
     @Override
     public final <R> void visitComment(Text<? extends Element, R> text) {
@@ -302,4 +311,6 @@ public abstract class HtmlVisitor extends ElementVisitor {
     public final <Z extends Element>  void visitParentBase(Base<Z> element) {
         visitParentOnVoidElements ();
     }
+
+
 }

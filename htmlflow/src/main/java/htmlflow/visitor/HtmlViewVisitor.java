@@ -83,6 +83,16 @@ public class HtmlViewVisitor extends HtmlVisitor {
     }
 
     @Override
+    public <E extends Element, U> void visitMfe(E element, BiConsumer<E, U> consumer) {
+        /**
+         * After first resolution we will only invoke the dynamicHtmlBlock consumer and no more visits
+         * to dynamic can happen.
+         * Otherwise, maybe we are invoking a dynamic nested in other dynamic, which is not allowed!
+         */
+        throw new IllegalStateException("You are already in a dynamic block! Do not use dynamic() chained inside another dynamic!");
+    }
+
+    @Override
     public <M, E extends Element> void visitAwait(E element, AwaitConsumer<E,M> asyncAction) {
         throw new IllegalStateException("Wrong use of await() in a HtmlView! Use HtmlFlow.viewAsync() to produce an async view.");
     }

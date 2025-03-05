@@ -25,7 +25,9 @@ public class HtmlMfeResource {
                     .__() // head
                     .body().h1().text("Hello from MFE!")
                     .__()
-                    .div()
+                    .div().mfe((div, model) -> {
+                        div.addAttr("cenas", "cenas");
+                    })
                     .custom("html-segment").addAttr("url", "http://localhost:8080/resource_alpha")
                     .__()
                     .div()

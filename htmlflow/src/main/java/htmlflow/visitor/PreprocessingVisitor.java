@@ -154,6 +154,11 @@ public class PreprocessingVisitor extends HtmlVisitor {
         throw new UnsupportedOperationException(NOT_SUPPORTED_ERROR);
     }
 
+    @Override
+    public <E extends Element, U> void visitMfe(E element, BiConsumer<E, U> consumer) {
+
+    }
+
     @SuppressWarnings({"squid:S3011", "squid:S112"})
     public static class HtmlContinuationSetter {
         private HtmlContinuationSetter() {

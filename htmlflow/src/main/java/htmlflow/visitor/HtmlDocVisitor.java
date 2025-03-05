@@ -75,4 +75,9 @@ public class HtmlDocVisitor extends HtmlVisitor {
         return new HtmlDocVisitor(this.out, isIndented);
     }
 
+    @Override
+    public <E extends Element, U> void visitMfe(E element, BiConsumer<E, U> consumer) {
+        throw new IllegalStateException("Wrong use of mfe in a static view! Use Mfe class instead..");
+    }
+
 }
