@@ -1,23 +1,21 @@
 package htmlflow;
 
-import htmlflow.visitor.HtmlViewVisitor;
+import htmlflow.visitor.HtmlVisitor;
 import org.xmlet.htmlapifaster.Html;
 
+
+
 public class HtmlMfe extends HtmlPage{
+    private final HtmlVisitor visitor;
 //    private final HtmlTemplate template;
-    private final String identifier;
-    private final HtmlViewVisitor visitor;
-    private final String customTagName;
 
-
-    public HtmlMfe(String identifier, HtmlViewVisitor visitor, String customTagName){
-        this.identifier = identifier;
+    public HtmlMfe(HtmlVisitor visitor){
         this.visitor = visitor;
-        this.customTagName = customTagName;
-    };
+//        this.template = template;
+    }
 
 
-    public HtmlViewVisitor getVisitor() {
+    public HtmlVisitor getVisitor() {
         return visitor;
     };
 
@@ -29,7 +27,7 @@ public class HtmlMfe extends HtmlPage{
 
     @Override
     public HtmlPage setIndented(boolean isIndented) {
-        return null;
+        return new HtmlMfe(visitor.clone(isIndented));
     }
 
     @Override
@@ -37,39 +35,14 @@ public class HtmlMfe extends HtmlPage{
         return null;
     }
 
-//    @Override
-//    public ElementVisitor getVisitor() {
-//        return null;
-//    }
-
     @Override
     public String getName() {
         return "HtmlMfe";
     }
 
     public String render() {
-        StringBuilder str = ((StringBuilder) getVisitor().out());
-        str.setLength(0);
+        StringBuilder str = (StringBuilder) visitor.out();
         getVisitor().resolve(null);
         return str.toString();
     }
-
-//    public String render() {
-//        // Clear any old content
-//        StringBuilder sb = (StringBuilder) visitor.out();
-//        sb.setLength(0);
-//
-//        // Start the skeleton
-//        html()
-//                .head()
-//                .title().text("Single MFE Component").__()
-//                .__()          // </head>
-//                .body().div().text("my custom tag").__()
-//                // Insert your single custom tag with an ID
-//                .raw("<" + customTagName + " id=\"" + identifier + "\"></" + customTagName + ">")
-//                .__()          // </body>
-//                .__();             // </html>
-//
-//        return sb.toString();
-//    }
 }

@@ -1,1 +1,1 @@
-mvn install:install-file -Dfile=//home/florin/Desktop/master-thesis/xsd2poet/target/xsd2poet-1.0.6-SNAPSHOT.jar -DgroupId=com.github.xmlet -DartifactId=xsd2poet -Dversion=1.0.6-SNAPSHOT -Dpackaging=jar
+mvn install:install-file -Dfile=/home/florin/master_thesis/xsd2poet/target/xsd2poet-1.0.6-SNAPSHOT.jar -DgroupId=com.github.xmlet -DartifactId=xsd2poet -Dversion=1.0.6-SNAPSHOT -Dpackaging=jar

@@ -55,6 +55,11 @@ public class HtmlDocVisitor extends HtmlVisitor {
     }
 
     @Override
+    public <E extends Element> void visitMfe(E e, String s, String s1) {
+        throw new IllegalStateException("Wrong use of mfe in a static view! Use Mfe class to produce an mfe view.");
+    }
+
+    @Override
     public final <M, E extends Element> void visitAwait(E element, AwaitConsumer<E,M> asyncAction) {
         throw new IllegalStateException("Wrong use of async() in a static view! Use HtmlViewAsync to produce an async view.");
     }
@@ -75,9 +80,5 @@ public class HtmlDocVisitor extends HtmlVisitor {
         return new HtmlDocVisitor(this.out, isIndented);
     }
 
-    @Override
-    public <E extends Element, U> void visitMfe(E element, BiConsumer<E, U> consumer) {
-        throw new IllegalStateException("Wrong use of mfe in a static view! Use Mfe class instead..");
-    }
 
 }

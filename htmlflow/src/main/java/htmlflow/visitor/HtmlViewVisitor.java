@@ -83,13 +83,8 @@ public class HtmlViewVisitor extends HtmlVisitor {
     }
 
     @Override
-    public <E extends Element, U> void visitMfe(E element, BiConsumer<E, U> consumer) {
-        /**
-         * After first resolution we will only invoke the dynamicHtmlBlock consumer and no more visits
-         * to dynamic can happen.
-         * Otherwise, maybe we are invoking a dynamic nested in other dynamic, which is not allowed!
-         */
-        throw new IllegalStateException("You are already in a dynamic block! Do not use dynamic() chained inside another dynamic!");
+    public <E extends Element> void visitMfe(E e, String s, String s1) {
+        throw new IllegalStateException("Wrong use of mfe in a static view! Use Mfe class to produce an mfe view.");
     }
 
     @Override

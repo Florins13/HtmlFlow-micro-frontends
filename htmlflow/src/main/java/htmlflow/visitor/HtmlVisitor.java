@@ -200,11 +200,6 @@ public abstract class HtmlVisitor extends ElementVisitor {
         write(HtmlEscapers.htmlEscaper().escape(text.getValue()));
     }
 
-    @Override
-    public <E extends Element, U> void visitMfe(E element, BiConsumer<E, U> consumer) {
-
-    }
-
     /**
      * To distinguish from text() that escapes HTML by default.
      * This raw() acts like text() but keeping text as it is.
@@ -215,7 +210,11 @@ public abstract class HtmlVisitor extends ElementVisitor {
         write(text.getValue());
     }
 
-//    public abstract <E extends Element, U> void visitMfe(E element, BiConsumer<E, U> consumer);
+    @Override
+    public <E extends Element> void visitMfe(E var1, String var2, String var3){
+        // why here it works?
+        var1.custom(var2).addAttr("url", var3);
+    }
 
     @Override
     public final <R> void visitComment(Text<? extends Element, R> text) {
@@ -311,6 +310,7 @@ public abstract class HtmlVisitor extends ElementVisitor {
     public final <Z extends Element>  void visitParentBase(Base<Z> element) {
         visitParentOnVoidElements ();
     }
+
 
 
 }

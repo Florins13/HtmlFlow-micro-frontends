@@ -24,11 +24,9 @@
  */
 package htmlflow;
 
-import htmlflow.visitor.HtmlDocVisitor;
-import htmlflow.visitor.HtmlViewVisitor;
-import htmlflow.visitor.HtmlViewVisitorAsync;
-import htmlflow.visitor.PreprocessingVisitor;
-import htmlflow.visitor.PreprocessingVisitorAsync;
+import htmlflow.visitor.*;
+
+import static java.lang.System.out;
 
 /**
  * Factory to create HtmlDoc or HtmlView instances corresponding to static HTMl pages or dynamic pages.
@@ -55,6 +53,14 @@ public class HtmlFlow {
          * NO problem with null model. We are just preprocessing static HTML blocks.
          * Thus, dynamic blocks which depend on model are not invoked.
          */
+        preView.getVisitor().resolve(null);
+        return pre;
+    }
+
+    private static PreprocessingVisitor preprocessingMfe(HtmlTemplate template, boolean isIndented) {
+        PreprocessingVisitor pre = new PreprocessingVisitor(isIndented);
+        HtmlMfe preView = new HtmlMfe(pre);
+        template.resolve(preView);
         preView.getVisitor().resolve(null);
         return pre;
     }
@@ -157,13 +163,9 @@ public class HtmlFlow {
         return new HtmlViewAsync<>(new HtmlViewVisitorAsync(isIndented, pre.getFirst()), template, threadSafe);
     }
 
-    public static HtmlMfe mfe(HtmlTemplate template, String customTagName) {
-        return HtmlFlow.mfe(template, "test", false, customTagName);
-    }
-
-    static HtmlMfe mfe(HtmlTemplate template, String identifier, boolean isIndented, String customTagName) {
-        PreprocessingVisitor pre = preprocessing(template, isIndented);
-        return new HtmlMfe(identifier, new HtmlViewVisitor(new StringBuilder(), isIndented, pre.getFirst()), customTagName);
+    public static HtmlMfe mfe(HtmlTemplate template) {
+        PreprocessingVisitor pre = preprocessingMfe(template, false);
+        return new HtmlMfe( new HtmlMfeVisitor(new StringBuilder(), false, pre.getFirst()));
     }
 
 

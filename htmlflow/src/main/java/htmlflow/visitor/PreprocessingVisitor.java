@@ -25,10 +25,7 @@
 
 package htmlflow.visitor;
 
-import htmlflow.continuations.HtmlContinuation;
-import htmlflow.continuations.HtmlContinuationSyncCloseAndIndent;
-import htmlflow.continuations.HtmlContinuationSyncDynamic;
-import htmlflow.continuations.HtmlContinuationSyncStatic;
+import htmlflow.continuations.*;
 import org.xmlet.htmlapifaster.Element;
 import org.xmlet.htmlapifaster.SuspendConsumer;
 import org.xmlet.htmlapifaster.async.AwaitConsumer;
@@ -113,6 +110,28 @@ public class PreprocessingVisitor extends HtmlVisitor {
         indentAndAdvanceStaticBlockIndex();
     }
 
+//    @Override
+//    public <E extends Element> void visitMfe(E var1, String var2, String var3) {
+//        // tentative with current pre processor
+//        HtmlContinuation dynamicCont = new HtmlContinuationTest<>(depth, isClosed, var1, this, new HtmlContinuationSyncCloseAndIndent(this));
+//        /**
+//         * We are resolving this view for the first time.
+//         * Now we just need to create an HtmlContinuation corresponding to the previous static HTML,
+//         * which will be followed by the dynamicCont.
+//         */
+//        chainContinuationStatic(dynamicCont);
+//        /**
+//         * We have to run newlineAndIndent to leave isClosed and indentation correct for
+//         * the next static HTML block.
+//         */
+//        indentAndAdvanceStaticBlockIndex();
+//    }
+
+//        @Override
+//    public <E extends Element> void visitMfe(E var1, String var2, String var3) {
+//        throw new UnsupportedOperationException("Await not allowed in HtmlView. Should use viewAsync() or viewSuspend() to manage an asynchronous view.");
+//    }
+
     @Override
     public <M, E extends Element> void visitAwait(E element, AwaitConsumer<E, M> asyncAction) {
         throw new UnsupportedOperationException("Await not allowed in HtmlView. Should use viewAsync() or viewSuspend() to manage an asynchronous view.");
@@ -152,11 +171,6 @@ public class PreprocessingVisitor extends HtmlVisitor {
     @Override
     public final HtmlVisitor clone(boolean isIndented) {
         throw new UnsupportedOperationException(NOT_SUPPORTED_ERROR);
-    }
-
-    @Override
-    public <E extends Element, U> void visitMfe(E element, BiConsumer<E, U> consumer) {
-
     }
 
     @SuppressWarnings({"squid:S3011", "squid:S112"})
