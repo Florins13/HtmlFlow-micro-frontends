@@ -25,6 +25,11 @@ public class HtmlMfeVisitor extends HtmlVisitor{
     }
 
     @Override
+    public final HtmlMfeVisitor clone(boolean isIndented)  {
+        return new HtmlMfeVisitor(out, isIndented, first);
+    }
+
+    @Override
     public final <E extends Element, U> void visitDynamic(E element, BiConsumer<E, U> dynamicHtmlBlock) {
         throw new IllegalStateException("Wrong use of dynamic() in a static view! Use HtmlView to produce a dynamic view.");
     }
@@ -44,10 +49,4 @@ public class HtmlMfeVisitor extends HtmlVisitor{
     public <M, E extends Element> void visitSuspending(E element, SuspendConsumer<E, M> suspendAction) {
         throw new IllegalStateException("Wrong use of suspending() in a static view! Use HtmlViewSuspend to produce an async view.");
     }
-
-    @Override
-    public final HtmlMfeVisitor clone(boolean isIndented)  {
-        return new HtmlMfeVisitor(out, isIndented, first);
-    }
-
 }

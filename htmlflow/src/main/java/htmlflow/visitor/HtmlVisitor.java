@@ -26,24 +26,10 @@ package htmlflow.visitor;
 
 import com.google.common.html.HtmlEscapers;
 import htmlflow.exceptions.HtmlFlowAppendException;
-import org.xmlet.htmlapifaster.Area;
-import org.xmlet.htmlapifaster.Base;
-import org.xmlet.htmlapifaster.Br;
-import org.xmlet.htmlapifaster.Col;
-import org.xmlet.htmlapifaster.Element;
-import org.xmlet.htmlapifaster.ElementVisitor;
-import org.xmlet.htmlapifaster.Embed;
-import org.xmlet.htmlapifaster.Hr;
-import org.xmlet.htmlapifaster.Img;
-import org.xmlet.htmlapifaster.Input;
-import org.xmlet.htmlapifaster.Link;
-import org.xmlet.htmlapifaster.Meta;
-import org.xmlet.htmlapifaster.Param;
-import org.xmlet.htmlapifaster.Root;
-import org.xmlet.htmlapifaster.Source;
-import org.xmlet.htmlapifaster.Text;
+import org.xmlet.htmlapifaster.*;
 
 import java.io.IOException;
+import java.lang.Object;
 import java.util.function.BiConsumer;
 
 import static htmlflow.visitor.Tags.*;
@@ -212,7 +198,6 @@ public abstract class HtmlVisitor extends ElementVisitor {
 
     @Override
     public <E extends Element> void visitMfe(E var1, String var2, String var3){
-        // why here it works?
         var1.custom(var2).addAttr("url", var3);
     }
 
