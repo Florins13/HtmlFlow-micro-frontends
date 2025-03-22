@@ -1,4 +1,4 @@
-class HtmlSegment extends HTMLElement {
+class TeamAlpha extends HTMLElement {
     constructor() {
         super();
     }
@@ -26,4 +26,4 @@ class HtmlSegment extends HTMLElement {
     }
 }
 
-export default HtmlSegment;
+export default TeamAlpha;

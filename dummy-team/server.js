@@ -5,7 +5,7 @@ const app = express();
 app.use(cors());
 
 app.get('/resource_omega', (req, res) => {
-    res.send('Hello from team OMEGA');
+    res.send('<p>Hello from team OMEGA</p>');
 });
 
 const port = 3000;

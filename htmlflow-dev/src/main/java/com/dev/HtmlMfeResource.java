@@ -23,9 +23,9 @@ public class HtmlMfeResource {
                         .script().attrType(EnumTypeScriptType.MODULE).attrSrc("/mfe-script.js").__()
                     .__()
                         .body().h1().text("Hello from MFE!").__()
-                        .div().mfe("html-segment", "http://localhost:8080/resource_alpha").addAttr("some-other-attribute", "red").__()
-                        .div().mfe("html-segment", "http://localhost:8080/resource_beta").__()
-                        .div().mfe("html-segment", "http://localhost:3000/resource_omega").__()
+                        .div().mfe("team-alpha", "http://localhost:8080/resource_alpha").addAttr("some-other-attribute", "red").__()
+                        .div().mfe("team-beta", "http://localhost:8080/html-chunked/stream").__()
+                        .div().mfe("team-alpha", "http://localhost:3000/resource_omega").__()
                     .__()
                     .__();
         });
