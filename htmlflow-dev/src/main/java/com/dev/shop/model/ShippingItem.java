@@ -2,6 +2,7 @@ package com.dev.shop.model;
 
 
 import com.dev.product.model.Bike;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -12,10 +13,11 @@ public class ShippingItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     private Bike bike;
 
     @ManyToOne
+    @JsonIgnore
     private Order order;
     private Integer quantity;
 

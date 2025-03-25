@@ -1,10 +1,13 @@
-import TeamAlpha from "./team-alpha.js";
-import TeamBeta from "./team-beta.js"
-import TeamOmega from "./team-omega.js";
+import TeamBlack from "./team-black.js";
+import TeamYellow from "./team-yellow.js"
+import TeamRed from "./team-red.js";
+import TeamGreen from "./team-green.js";
 
-window.customElements.define('team-alpha', TeamAlpha);
-window.customElements.define('team-beta', TeamBeta);
-window.customElements.define('team-omega', TeamOmega);
+window.customElements.define('team-black', TeamBlack);
+window.customElements.define('team-yellow', TeamYellow);
+window.customElements.define('team-red', TeamRed);
+window.customElements.define('team-green', TeamGreen);
+
 
 export function goToCheckout(){
     window.location.replace(window.location.origin + "/cart/checkout");

@@ -1,4 +1,4 @@
-class TeamBeta extends HTMLElement {
+class TeamYellow extends HTMLElement {
     constructor() {
         super();
     }
@@ -24,7 +24,6 @@ class TeamBeta extends HTMLElement {
         console.log(`Attribute ${name} has changed.`);
     }
 
-
 }
 
 async function fetchStreamData(test, url) {
@@ -45,4 +44,4 @@ async function fetchStreamData(test, url) {
 
 
 
-export default TeamBeta;
+export default TeamYellow;

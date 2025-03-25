@@ -7,8 +7,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class CartItemRepository implements PanacheRepository<CartItem> {
 
-    public void deleteCartItemById(Long id){
-        this.delete("cart_id", id);
+    public void emptyCart(){
+//        this.deleteById(id);
+        this.deleteAll();
     }
 
     public void deleteWhereCartIdAndCartItemId(Long cartItemId, Long cartId){

@@ -1,13 +1,13 @@
-class TeamAlpha extends HTMLElement {
-    test = '';
+class TeamBlack extends HTMLElement {
+    urlResource = '';
     constructor() {
         super();
     }
 
     connectedCallback() {
-        this.test = this.getAttribute("url");
-        console.log(this.test);
-        if(this.test) {
+        window.addEventListener('triggerBikeList', this.fetchData.bind(this))
+        this.urlResource = this.getAttribute("url");
+        if(this.urlResource) {
             this.fetchData();
         }
     }
@@ -39,9 +39,8 @@ class TeamAlpha extends HTMLElement {
             });
 
             if (response.ok) {
-                console.log("HELLO?")
                 // Dispatch a custom event named "postSuccess"
-                const event = new CustomEvent('postSuccess', {
+                const event = new CustomEvent('triggerCartEvent', {
                     detail: { message: 'Post succeeded', payload },
                     bubbles: true,    // Allows the event to bubble up the DOM tree
                     composed: true    // Allows the event to cross shadow DOM boundaries
@@ -56,7 +55,7 @@ class TeamAlpha extends HTMLElement {
     }
 
     fetchData(){
-        let url_resource = this.test;
+        let url_resource = this.urlResource;
         fetch(url_resource).then(data =>{
             if(url_resource.includes("4200")){
                 data.text()
@@ -64,8 +63,7 @@ class TeamAlpha extends HTMLElement {
                         // Create a container element for the fetched HTML
                         const parser = new DOMParser();
                         const doc = parser.parseFromString(htmlString, 'text/html');
-                        const node = doc; // or .firstElementChild
-                        console.log(node);
+                        this.innerHTML = null;
                         this.insertAdjacentElement("beforeend",doc.body);
                         const button = this.querySelectorAll('button');
                         button.forEach(button=>{
@@ -73,7 +71,7 @@ class TeamAlpha extends HTMLElement {
                                 // Attach a click event listener to the button
                                 button.addEventListener('click', () => this.handleButtonClick(button.getAttribute("id")));
                             } else {
-                                console.warn("Button with id 'test1' not found in", this);
+                                console.warn("Button not found!", this);
                             }
                         })
                     })
@@ -92,5 +90,5 @@ function goToCheckout(){
     window.location.replace(window.location.origin + "/cart/checkout");
 }
 
-export default TeamAlpha;
+export default TeamBlack;
 

@@ -34,7 +34,7 @@ public class OrderServiceImpl implements OrderService {
         Order newOrder = createOrder(fullName, address, telephone, zipCode, acquireType);
         updateStock(newOrder.getShippingItems());
         // Empty out the cart of user after placing order.
-        cartItemRepository.deleteCartItemById(getUserCart().getId());
+        cartItemRepository.emptyCart();
         return newOrder;
     }
 
