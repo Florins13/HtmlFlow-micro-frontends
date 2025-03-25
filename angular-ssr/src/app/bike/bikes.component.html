@@ -1,0 +1,34 @@
+<main style="padding: 20px;">
+    <div style="margin-bottom:10px">
+        <label for="search">Search</label>
+        <input type="text" id="search" name="search">
+    </div>
+    <div style="display: flex;gap: 20px;flex-wrap: wrap;justify-content: space-evenly;">
+        @for(bike of bikes; track bike.id){
+            <div style="    height: 300px;
+            width: 300px;
+            background-color: #dbe7d6;
+            display: flex;
+            flex-flow: column;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 25px">
+                <h4>Model: {{bike.model}}</h4>
+                <img src="/{{bike.imageSource}}" height="70px" width="70px">
+                <span>Stock: {{bike.stock}}</span>
+                <span>Details: {{bike.details}}</span>
+                <span>Electric: {{bike.electric}}</span>
+                <span>Price: {{bike.price}}€</span>
+                <div style="display: flex;gap: 10px;">
+                        @if(bike.inStock){
+                            <button id="cenas{{bike.id}}" (click)="addToCart(bike.id)">Add to cart</button>
+                        }@else{
+                            <button>Out of stock</button>
+                        }
+                </div>
+            </div>
+        } @empty {
+            <p>There are no bikes.</p>
+        }
+    </div>
+</main>
