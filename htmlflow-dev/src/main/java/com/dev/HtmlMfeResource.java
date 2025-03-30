@@ -9,6 +9,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.xmlet.htmlapifaster.Element;
 import org.xmlet.htmlapifaster.EnumTypeScriptType;
 
 import java.util.ArrayList;
@@ -57,3 +58,36 @@ public class HtmlMfeResource {
 
     }
 }
+
+//ElementBase --->
+//default T mfe(MfeConfiguration data) {
+//    T self = this.self();
+//    this.getVisitor().visitMfe(self, data);
+//    return self;
+//}
+//
+//ElementVIsitorBase --->
+//public abstract <E extends Element> void visitMfe(E element, MfeConfiguration data);
+//
+//GeneratorConstants --->
+//public static final ClassName mfeConfiguration = ClassName.get(CLASS_PACKAGE, "MfeConfiguration");
+//
+//New class MfeConfiguration --->
+//        package org.xmlet.htmlapifaster;
+//
+//
+//public interface MfeConfiguration {
+//    String getMFE_URL_RESOURCE();
+//
+//    String getMFE_ELEMENT_NAME();
+//
+//    String getMFE_LISTENING_EVENT_NAME();
+//
+//    String getMFE_TRIGGERS_EVENT_NAME();
+//
+//    String getMFE_SCRIPT_NAME();
+//
+//    String getMFE_CSS_NAME();
+//
+//    boolean isMFE_MULTIPLE_BUTTONS();
+//}
