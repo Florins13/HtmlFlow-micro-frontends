@@ -9,9 +9,11 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>api</module>
         <module>htmlflow</module>
         <module>htmlflow-dev</module>
-        <module>api</module>
+        <module>htmlflow-mfe</module>
+        <module>qute-mfe</module>
         <module>spring-mfe</module>
     </modules>
 </project>

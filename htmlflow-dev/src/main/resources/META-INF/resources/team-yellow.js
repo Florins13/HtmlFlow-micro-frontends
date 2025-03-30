@@ -4,7 +4,7 @@ class TeamYellow extends HTMLElement {
     }
 
     connectedCallback() {
-        const url_resource = this.getAttribute("url");
+        const url_resource = this.getAttribute("mfe-url");
         let test = this;
         console.log(url_resource);
         if(url_resource){

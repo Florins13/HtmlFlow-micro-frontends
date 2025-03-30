@@ -24,12 +24,12 @@ public class HtmlMfeResource {
         HtmlMfeConfig mfeBike = new HtmlMfeConfig("http://localhost:8081/bikes", "team-black", "triggerBikeEvent", "triggerCartEvent", "team-black.js", "", false);
         HtmlMfeConfig mfeCart = new HtmlMfeConfig("http://localhost:8083/cart", "team-red", "triggerCartEvent", "triggerOrderEvent", "team-red.js", "", false);
         HtmlMfeConfig mfeOrder = new HtmlMfeConfig("http://localhost:8084/order/history", "team-green", "triggerOrderEvent", "triggerBikeEvent", "team-green.js", "", false);
+        HtmlMfeConfig mfeStream = new HtmlMfeConfig("http://localhost:8080/html-chunked/stream", "team-yellow", "test", "test", "team-yellow.js", "", false);
         HtmlMfe mfe = HtmlFlow.mfe(htmlMfeConfigList ,page -> {
             page.html()
                     .head()
                     // Reference JS file in META-INF/resources/main.js
                         .script().attrType(EnumTypeScriptType.MODULE).attrSrc("/main.js").__()
-
                     .__()
                         .body()
                         .div().addAttr("style", "display: flex; justify-content: center;height: 100px;border: blue 1px solid;")
@@ -42,12 +42,12 @@ public class HtmlMfeResource {
                             .div().addAttr("style", "height:800px; width: 20%;border: red 1px solid; margin: 20px")
                                 .mfe(mfeCart).__()
                         .__()
-                    .div()
-                        .div().addAttr("style", "border: green 1px solid; margin: 20px")
-                            .mfe(mfeOrder).__()
-                    .__()
+                        .div()
+                            .div().addAttr("style", "border: green 1px solid; margin: 20px")
+                                .mfe(mfeOrder).__()
+                        .__()
                     .div().addAttr("style", "display: flex; justify-content: center;height: 150px;border: yellow 1px solid;")
-//                        .div().mfe("team-yellow", "http://localhost:8080/html-chunked/stream").__()
+                        .div().mfe(mfeStream).__()
                     .__()
                     .__();
         });
