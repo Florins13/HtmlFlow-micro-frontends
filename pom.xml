@@ -12,8 +12,8 @@
         <module>api</module>
         <module>htmlflow</module>
         <module>htmlflow-dev</module>
-        <module>htmlflow-mfe</module>
-        <module>qute-mfe</module>
-        <module>spring-mfe</module>
+        <module>mfe-htmlflow</module>
+        <module>mfe-qute</module>
+        <module>mfe-spring</module>
     </modules>
 </project>
