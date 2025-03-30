@@ -11,5 +11,7 @@
     <modules>
         <module>htmlflow</module>
         <module>htmlflow-dev</module>
+        <module>api</module>
+        <module>spring-mfe</module>
     </modules>
 </project>

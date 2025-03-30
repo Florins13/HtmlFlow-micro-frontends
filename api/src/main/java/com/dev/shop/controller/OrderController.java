@@ -3,10 +3,7 @@ package com.dev.shop.controller;
 
 import com.dev.shop.controller.dto.OrderDTO;
 import com.dev.shop.model.Order;
-import com.dev.shop.model.OrderView;
 import com.dev.shop.service.OrderService;
-import htmlflow.HtmlFlow;
-import htmlflow.HtmlView;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -47,7 +44,7 @@ public class OrderController {
     @Produces(MediaType.TEXT_HTML)
     public Response getOrders() {
         List<OrderDTO> orderDTOList = orderServiceImpl.getOrders().stream().map(order -> new OrderDTO(order)).collect(Collectors.toList());
-        String html = OrderView.orderHistoryView.render(orderDTOList);
-        return Response.ok(html).build();
+//        String html = OrderView.orderHistoryView.render(orderDTOList);
+        return Response.ok(orderDTOList).build();
     }
 }
