@@ -27,11 +27,6 @@ public class OrderController {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response order() throws Exception {
-//        @FormParam("fullName") String fullName,
-//        @FormParam("address") String address,
-//        @FormParam("telephone") Integer telephone,
-//        @FormParam("zipCode") String zipCode,
-//        @FormParam("acquire") String acquireType
         if (orderServiceImpl.getUserCart().cartIsEmpty())
             throw new Exception("Your cart is empty, please add items and try again!");
         OrderDTO newOrder = new OrderDTO(orderServiceImpl.placeOrder("test name", "test address", 123, "22-44", "BUY"));
@@ -41,7 +36,7 @@ public class OrderController {
     @GET
     @Path("/history")
 //    @RolesAllowed("BASIC")
-    @Produces(MediaType.TEXT_HTML)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getOrders() {
         List<OrderDTO> orderDTOList = orderServiceImpl.getOrders().stream().map(order -> new OrderDTO(order)).collect(Collectors.toList());
 //        String html = OrderView.orderHistoryView.render(orderDTOList);

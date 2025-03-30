@@ -3,14 +3,17 @@ package htmlflow;
 import htmlflow.visitor.HtmlVisitor;
 import org.xmlet.htmlapifaster.Html;
 
+import java.util.List;
 
 
 public class HtmlMfe extends HtmlPage{
     private final HtmlVisitor visitor;
+    private final List<HtmlMfeConfig> mfeConfigList;
 //    private final HtmlTemplate template;
 
-    public HtmlMfe(HtmlVisitor visitor){
+    public HtmlMfe(List<HtmlMfeConfig> mfeConfigList, HtmlVisitor visitor){
         this.visitor = visitor;
+        this.mfeConfigList = mfeConfigList;
 //        this.template = template;
     }
 
@@ -22,12 +25,13 @@ public class HtmlMfe extends HtmlPage{
     @Override
     public Html<HtmlPage> html() {
         getVisitor().write(HEADER);
+//        getVisitor().write("<script src='/test.js' type='module'></script>");
         return new Html<>(this);
     }
 
     @Override
     public HtmlPage setIndented(boolean isIndented) {
-        return new HtmlMfe(visitor.clone(isIndented));
+        return new HtmlMfe(this.mfeConfigList, visitor.clone(isIndented));
     }
 
     @Override

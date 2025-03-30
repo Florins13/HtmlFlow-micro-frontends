@@ -1,33 +1,13 @@
-class TeamBlack extends HTMLElement {
-    urlResource = '';
+import Base from "./base.js";
+
+class TeamBlack extends Base {
     constructor() {
         super();
     }
 
-    connectedCallback() {
-        window.addEventListener('triggerBikeList', this.fetchData.bind(this))
-        this.urlResource = this.getAttribute("url");
-        if(this.urlResource) {
-            this.fetchData();
-        }
-    }
-
-    disconnectedCallback() {
-        console.log("Custom element removed from page.");
-    }
-
-    adoptedCallback() {
-        console.log("Custom element moved to new page.");
-    }
-
-    attributeChangedCallback(name, oldValue, newValue) {
-        console.log(`Attribute ${name} has changed.`);
-    }
-
     async handleButtonClick(id) {
-        let myId = id.replace("cenas","")
-        const endpoint = `http://localhost:8080/cart/add/${myId}`; // Replace with your POST endpoint
-        const payload = { id: myId }; // Adjust payload as needed
+        const endpoint = `http://localhost:8080/cart/add/${id}`; // Replace with your POST endpoint
+        const payload = { id: id }; // Adjust payload as needed
 
         try {
             const response = await fetch(endpoint, {
@@ -40,7 +20,7 @@ class TeamBlack extends HTMLElement {
 
             if (response.ok) {
                 // Dispatch a custom event named "postSuccess"
-                const event = new CustomEvent('triggerCartEvent', {
+                const event = new CustomEvent(this.MFE_TRIGGERS_EVENT_NAME, {
                     detail: { message: 'Post succeeded', payload },
                     bubbles: true,    // Allows the event to bubble up the DOM tree
                     composed: true    // Allows the event to cross shadow DOM boundaries
@@ -55,28 +35,25 @@ class TeamBlack extends HTMLElement {
     }
 
     fetchData(){
-        let url_resource = this.urlResource;
-        fetch(url_resource).then(data =>{
-                data.text()
-                    .then(htmlString => {
-                        // Create a container element for the fetched HTML
-                        const parser = new DOMParser();
-                        const doc = parser.parseFromString(htmlString, 'text/html');
-                        this.innerHTML = null;
-                        // if we use doc body it will add another body tag
-                        this.insertAdjacentElement("beforeend",doc.body);
-                        const button = this.querySelectorAll('button');
-                        button.forEach(button=>{
-                            if (button) {
-                                // Attach a click event listener to the button
-                                button.addEventListener('click', () => this.handleButtonClick(button.getAttribute("id")));
-                            } else {
-                                console.warn("Button not found!", this);
-                            }
-                        })
-                        const scripts = this.querySelectorAll('script');
+        fetch(this.MFE_URL_RESOURCE).then(data =>{
+            data.text()
+                .then(htmlString => {
+                    // Create a container element for the fetched HTML
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(htmlString, 'text/html');
+                    this.innerHTML = null;
+                    this.insertAdjacentElement("beforeend",doc.body);
+                    const button = this.querySelectorAll('button');
+                    button.forEach(button=>{
+                        if (button) {
+                            // Attach a click event listener to the button
+                            button.addEventListener('click', () => this.handleButtonClick(button.getAttribute("mfe-id")));
+                        } else {
+                            console.warn("Button not found!", this);
+                        }
                     })
-                    .catch(() => this.innerHTML = "This team is unavailable!");
+                })
+                .catch(() => this.innerHTML = "This team is unavailable!");
         }, ()=> this.innerHTML = "This team is unavailable!")
     }
 

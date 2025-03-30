@@ -26,6 +26,7 @@ package htmlflow.visitor;
 
 import htmlflow.continuations.HtmlContinuation;
 import org.xmlet.htmlapifaster.Element;
+import org.xmlet.htmlapifaster.MfeConfiguration;
 import org.xmlet.htmlapifaster.SuspendConsumer;
 import org.xmlet.htmlapifaster.async.AwaitConsumer;
 
@@ -83,8 +84,8 @@ public class HtmlViewVisitor extends HtmlVisitor {
     }
 
     @Override
-    public <E extends Element> void visitMfe(E e, String s, String s1) {
-        throw new IllegalStateException("Wrong use of mfe in a static view! Use Mfe class to produce an mfe view.");
+    public <E extends Element> void visitMfe(E e, MfeConfiguration mfeConfiguration) {
+        throw new IllegalStateException("Wrong use of mfe in a HtmlView! Use HtmlMfe class instead.");
     }
 
     @Override

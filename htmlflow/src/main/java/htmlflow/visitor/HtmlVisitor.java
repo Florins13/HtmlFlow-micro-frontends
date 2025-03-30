@@ -25,8 +25,10 @@
 package htmlflow.visitor;
 
 import com.google.common.html.HtmlEscapers;
+import htmlflow.HtmlMfeConfig;
 import htmlflow.exceptions.HtmlFlowAppendException;
 import org.xmlet.htmlapifaster.*;
+import org.xmlet.htmlapifaster.async.OnCompletion;
 
 import java.io.IOException;
 import java.lang.Object;
@@ -197,14 +199,16 @@ public abstract class HtmlVisitor extends ElementVisitor {
     }
 
     @Override
-    public <E extends Element> void visitMfe(E var1, String var2, String var3){
-        var1.custom(var2).addAttr("url", var3);
-    }
-
-    @Override
     public final <R> void visitComment(Text<? extends Element, R> text) {
         newlineAndIndent();
         addComment(out, text.getValue());
+    }
+
+    @Override
+    public <E extends Element> void visitMfe(E e, MfeConfiguration mfeConfiguration) {
+        e.custom(mfeConfiguration.getMFE_ELEMENT_NAME()).addAttr("mfe-url", mfeConfiguration.getMFE_URL_RESOURCE());
+        e.getVisitor().visitAttribute("mfe-listen-event", mfeConfiguration.getMFE_LISTENING_EVENT_NAME());
+        e.getVisitor().visitAttribute("mfe-trigger-event", mfeConfiguration.getMFE_TRIGGERS_EVENT_NAME());
     }
 
     /*=========================================================================*/

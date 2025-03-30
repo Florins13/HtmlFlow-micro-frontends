@@ -18,16 +18,13 @@ public class CartController {
     @Inject
     CartService cartServiceImpl;
 
-    @Inject
-    Template cart;
-
 
     @GET
 //    @RolesAllowed("BASIC")
-    @Produces(MediaType.TEXT_HTML)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getCart() {
-//        CartDTO newCart = new CartDTO(cartServiceImpl.getUserCart());
-        return Response.ok(cart.data("cart", new CartDTO(cartServiceImpl.getUserCart())).render()).build();
+        CartDTO newCart = new CartDTO(cartServiceImpl.getUserCart());
+        return Response.ok(newCart).build();
     }
 
     @POST
@@ -63,6 +60,5 @@ public class CartController {
         CheckoutDTO checkoutDTO = new CheckoutDTO(cartServiceImpl.getUserCart(), cartServiceImpl.calculateRentTotal());
         return Response.ok(checkoutDTO).build();
     }
-
 
 }
