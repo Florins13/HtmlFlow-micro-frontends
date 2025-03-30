@@ -7,8 +7,3 @@ window.customElements.define('team-black', TeamBlack);
 window.customElements.define('team-yellow', TeamYellow);
 window.customElements.define('team-red', TeamRed);
 window.customElements.define('team-green', TeamGreen);
-
-
-export function goToCheckout(){
-    window.location.replace(window.location.origin + "/cart/checkout");
-}
