@@ -12,7 +12,7 @@ services:
     image: api
     build:
       context: ./api
-      dockerfile: src/main/docker/Dockerfile.jvm
+      dockerfile: Dockerfile
     container_name: api
     depends_on:
       - postgres
@@ -37,32 +37,40 @@ services:
     environment:
       - API_URL=http://api:8080/bikes
 
+  mfe-qute:
+    build:
+      context: ./mfe-qute
+      dockerfile: Dockerfile
+    container_name: mfe-qute
+    depends_on:
+      - api
+    ports:
+      - "8083:8083"
+    environment:
+      - API_URL=http://api:8080/cart
+
+  mfe-htmlflow:
+    build:
+      context: ./mfe-htmlflow
+      dockerfile: Dockerfile
+    container_name: mfe-htmlflow
+    depends_on:
+      - api
+    ports:
+      - "8084:8084"
+    environment:
+      - API_URL=http://api:8080/history
+
   htmlflow-dev:
     image: htmlflow-dev
     build:
       context: ./htmlflow-dev
-      dockerfile: src/main/docker/Dockerfile.jvm
+      dockerfile: Dockerfile
     container_name: htmlflow-dev
     depends_on:
       - api
       - mfe-spring
+      - mfe-qute
+      - mfe-htmlflow
     ports:
       - "8082:8082"
-
-#  quarkus-service2:
-#    build: ./quarkus-app2
-#    container_name: quarkus-service2
-#    # Map container port 8080 to host port 8082
-#    ports:
-#      - "8082:8080"
-#    environment:
-#      - QUARKUS_PROFILE=prod
-#
-#  quarkus-service3:
-#    build: ./quarkus-app3
-#    container_name: quarkus-service3
-#    # Map container port 8080 to host port 8083
-#    ports:
-#      - "8083:8080"
-#    environment:
-#      - QUARKUS_PROFILE=prod

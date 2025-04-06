@@ -1,5 +1,7 @@
 package com.dev;
 
+import com.dev.dto.OrderDTO;
+import com.dev.dto.ShippingItemDTO;
 import htmlflow.HtmlFlow;
 import htmlflow.HtmlView;
 
@@ -21,7 +23,6 @@ public class OrderView {
                 .th().text("Address").__()
                 .th().text("User").__()
                 .__()
-                // dynamic block to loop over the list of orders
                 .<List<OrderDTO>>dynamic( (table, orders) -> {
                     for (OrderDTO order : orders) {
                         table.tr()

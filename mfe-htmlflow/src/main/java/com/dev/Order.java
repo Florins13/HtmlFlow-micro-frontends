@@ -1,5 +1,6 @@
 package com.dev;
 
+import com.dev.dto.OrderDTO;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -19,7 +20,6 @@ public class Order {
 
     @GET
     @Path("/history")
-//    @RolesAllowed("BASIC")
     @Produces(MediaType.TEXT_HTML)
     public Response getOrders() {
         List<OrderDTO> orderDTOList = orderClient.getOrderHistory();

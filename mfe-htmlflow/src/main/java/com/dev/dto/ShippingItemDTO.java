@@ -1,4 +1,4 @@
-package com.dev;
+package com.dev.dto;
 
 public class ShippingItemDTO {
     private int id;

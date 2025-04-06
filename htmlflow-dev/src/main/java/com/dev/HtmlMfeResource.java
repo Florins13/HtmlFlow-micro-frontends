@@ -1,6 +1,7 @@
 package com.dev;
 
 
+
 import htmlflow.HtmlFlow;
 import htmlflow.HtmlMfe;
 import htmlflow.HtmlMfeConfig;
@@ -9,7 +10,6 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.xmlet.htmlapifaster.Element;
 import org.xmlet.htmlapifaster.EnumTypeScriptType;
 
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public class HtmlMfeResource {
         HtmlMfeConfig mfeCart = new HtmlMfeConfig("http://localhost:8083/cart", "team-red", "triggerCartEvent", "triggerOrderEvent", "team-red.js", "", false);
         HtmlMfeConfig mfeOrder = new HtmlMfeConfig("http://localhost:8084/order/history", "team-green", "triggerOrderEvent", "triggerBikeEvent", "team-green.js", "", false);
         HtmlMfeConfig mfeStream = new HtmlMfeConfig("http://localhost:8080/html-chunked/stream", "team-yellow", "test", "test", "team-yellow.js", "", false);
-        HtmlMfe mfe = HtmlFlow.mfe(htmlMfeConfigList ,page -> {
+        HtmlMfe mfe = HtmlFlow.mfe(htmlMfeConfigList , page -> {
             page.html()
                     .head()
                     // Reference JS file in META-INF/resources/main.js
