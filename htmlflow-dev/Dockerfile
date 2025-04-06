@@ -1,0 +1,26 @@
+# Use an official OpenJDK runtime as the base image
+FROM openjdk:17-alpine
+
+# Set the working directory inside the container
+WORKDIR /app
+
+ENV LANGUAGE='en_US:en'
+COPY .mvn .mvn
+COPY mvnw .
+
+
+# Copy the pom and source
+COPY pom.xml .
+COPY src ./src
+COPY /target .
+
+COPY --chmod=755 mvnw .
+#RUN ./mvnw clean package -DskipTests -Dgpg.skip this wont work because htmlflow needs to fetch poet with the code I need
+#for now lets copy the target and run it
+
+
+# Expose the port Quarkus listens on (usually 8080)
+EXPOSE 8082
+
+# Run the Quarkus application
+ENTRYPOINT ["java", "-jar", "/target/quarkus-run.jar"]

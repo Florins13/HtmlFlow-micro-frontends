@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.dev</groupId>
-    <artifactId>spring-mfe</artifactId>
+    <artifactId>mfe-spring</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>spring-mfe</name>
-    <description>spring-mfe</description>
+    <name>mfe-spring</name>
+    <description>nfe-spring</description>
     <url/>
     <licenses>
         <license/>

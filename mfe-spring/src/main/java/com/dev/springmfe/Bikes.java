@@ -3,6 +3,7 @@ package com.dev.springmfe;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,12 +16,15 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class Bikes {
 
+    @Value("${api.url}")
+    private String apiUrl;
+
     @CrossOrigin(origins = "*")
     @GetMapping("/bikes")
     public String getBikes(Model model) throws JsonProcessingException {
 
         RestTemplate restTemplate = new RestTemplate();
-        String externalUrl = "http://localhost:8080/bikes";
+        String externalUrl = apiUrl;
 
         String responseData = restTemplate.getForObject(externalUrl, String.class);
 
