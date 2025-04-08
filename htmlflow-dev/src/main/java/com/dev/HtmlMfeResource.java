@@ -21,7 +21,12 @@ public class HtmlMfeResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public Response getHtml() {
+        // 1. should we have an initiator of the js files?
+        // 2. HtmlMfeConfig is used in pot as well, to discuss the next point
+        // 3. we could basically here set the script to the origin of the microservice, for now fetch from same origin, in this case 8082/mfe
+        // 4. we could fetch css from the microservice or have the files in the resources of MFE
         List<HtmlMfeConfig> htmlMfeConfigList = new ArrayList<>();
+
         HtmlMfeConfig mfeBike = new HtmlMfeConfig("http://localhost:8081/bikes", "team-black", "triggerBikeEvent", "triggerCartEvent", "team-black.js", "", false);
         HtmlMfeConfig mfeCart = new HtmlMfeConfig("http://localhost:8083/cart", "team-red", "triggerCartEvent", "triggerOrderEvent", "team-red.js", "", false);
         HtmlMfeConfig mfeOrder = new HtmlMfeConfig("http://localhost:8084/order/history", "team-green", "triggerOrderEvent", "triggerBikeEvent", "team-green.js", "", false);

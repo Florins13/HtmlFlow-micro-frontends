@@ -25,7 +25,8 @@ public class HtmlMfe extends HtmlPage{
     @Override
     public Html<HtmlPage> html() {
         getVisitor().write(HEADER);
-//        getVisitor().write("<script src='/test.js' type='module'></script>");
+        // we could set the script from microservice origin
+        // getVisitor().write("<script src='/test.js' type='module'></script>");
         return new Html<>(this);
     }
 

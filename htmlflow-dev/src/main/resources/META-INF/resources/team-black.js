@@ -6,9 +6,8 @@ class TeamBlack extends Base {
     }
 
     async handleButtonClick(id) {
-        const endpoint = `http://localhost:8080/cart/add/${id}`; // Replace with your POST endpoint
-        const payload = { id: id }; // Adjust payload as needed
-
+        const endpoint = `http://localhost:8080/cart/add/${id}`; // post
+        const payload = { id: id };
         try {
             const response = await fetch(endpoint, {
                 method: 'POST',

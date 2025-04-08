@@ -1,7 +1,5 @@
 package com.dev.shop.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -35,7 +33,6 @@ public class Cart {
     }
 
     public BigDecimal calculateTotalCost(int cartItemQuantity, BigDecimal cartItemPrice) {
-        // TODO: leave comment about big decimal.zero
         BigDecimal totalCost = BigDecimal.ZERO;
         BigDecimal itemCost;
         itemCost = cartItemPrice.multiply(BigDecimal.valueOf(cartItemQuantity));
