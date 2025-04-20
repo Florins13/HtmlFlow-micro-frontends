@@ -23,13 +23,13 @@ public class OrderController {
     @POST
     @Path("/finalise")
 //    @RolesAllowed("BASIC")
-    @Transactional
     @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
     public Response order() throws Exception {
         if (orderServiceImpl.getUserCart().cartIsEmpty())
             throw new Exception("Your cart is empty, please add items and try again!");
-        OrderDTO newOrder = new OrderDTO(orderServiceImpl.placeOrder("test name", "test address", 123, "22-44", "BUY"));
-        return Response.ok(newOrder).build();
+        orderServiceImpl.placeOrder("test name", "test address", 123, "22-44", "BUY");
+        return Response.ok().build();
     }
 
     @GET

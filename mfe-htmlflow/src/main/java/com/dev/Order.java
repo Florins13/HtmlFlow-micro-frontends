@@ -7,7 +7,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Path("/order")
@@ -28,11 +27,7 @@ public class Order {
 
     @POST
     @Path("/finalise")
-    @Produces(MediaType.TEXT_HTML)
-    public Response addItem() {
-        List<OrderDTO> orderDTOList = new ArrayList<>();
-        orderDTOList.add(orderClient.finaliseTransaction());
-        String html = OrderView.orderHistoryView.render(orderDTOList);
-        return Response.ok(html).build();
+    public void addItem() {
+        orderClient.finaliseTransaction();
     }
 }

@@ -26,6 +26,7 @@ public class HtmlMfeResource {
             page.html()
                     .head()
                     .script().attrType(EnumTypeScriptType.MODULE).attrSrc("https://cdn.jsdelivr.net/npm/@hotwired/turbo@latest/dist/turbo.es2017-esm.min.js").__()
+                    .script().attrType(EnumTypeScriptType.MODULE).attrSrc("main.js").__()
 //                    .meta().addAttr("name", "turbo-refresh-method").addAttr("content", "morph").__()
                     .__()
                         .body()

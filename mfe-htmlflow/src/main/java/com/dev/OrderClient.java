@@ -3,6 +3,7 @@ package com.dev;
 import com.dev.dto.OrderDTO;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 import java.util.List;
@@ -19,5 +20,5 @@ public interface OrderClient {
     @POST
     @Path("/finalise")
     @Produces(MediaType.APPLICATION_JSON)
-    OrderDTO finaliseTransaction();
+    Response finaliseTransaction();
 }
