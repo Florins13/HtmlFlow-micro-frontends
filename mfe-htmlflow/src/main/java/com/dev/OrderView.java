@@ -10,6 +10,7 @@ import java.util.List;
 public class OrderView {
     public static final HtmlView<List<OrderDTO>> orderHistoryView = HtmlFlow.view(content -> {
         content
+                .custom("turbo-frame").addAttr("id", "test_transaction_frame")
                 .div()
                 .attrStyle("padding-left: 10px")
                 .h3().text("Order history:").__()

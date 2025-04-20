@@ -25,7 +25,6 @@ public class OrderController {
 //    @RolesAllowed("BASIC")
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     public Response order() throws Exception {
         if (orderServiceImpl.getUserCart().cartIsEmpty())
             throw new Exception("Your cart is empty, please add items and try again!");

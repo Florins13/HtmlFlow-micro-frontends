@@ -4,8 +4,6 @@ package com.dev.shop.controller;
 import com.dev.shop.controller.dto.CartDTO;
 import com.dev.shop.controller.dto.CheckoutDTO;
 import com.dev.shop.service.CartService;
-import io.quarkus.qute.Template;
-import io.quarkus.qute.TemplateInstance;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
@@ -35,7 +33,8 @@ public class CartController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllCarts(@PathParam("id") Long id) {
         cartServiceImpl.addToCart(id);
-        return Response.ok().build();
+        CartDTO newCart = new CartDTO(cartServiceImpl.getUserCart());
+        return Response.ok(newCart).build();
     }
 
 
