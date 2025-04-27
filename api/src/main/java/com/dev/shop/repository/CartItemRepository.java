@@ -13,7 +13,7 @@ public class CartItemRepository implements PanacheRepository<CartItem> {
     }
 
     public void deleteWhereCartIdAndCartItemId(Long cartItemId, Long cartId){
-        this.delete("id = ?1 and cart_id = ?2", cartItemId, cartId);
+        this.delete("id = ?1 and cart.id = ?2", cartItemId, cartId);
     }
 
 }

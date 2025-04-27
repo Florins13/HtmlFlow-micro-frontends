@@ -1,3 +1,6 @@
+/*
+    This to discuss if there should be a script that pregenerates the needed javascript files.
+ */
 class Base extends HTMLElement {
     MFE_URL_RESOURCE = "";
     MFE_LISTENING_EVENT_NAME = "";

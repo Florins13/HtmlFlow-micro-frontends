@@ -40,14 +40,22 @@ public class CartController {
 
 
     @POST
-    @Path("/deleteItem")
+    @Path("/deleteItem/{id}")
 //    @RolesAllowed("BASIC")
     @Transactional
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response deleteCartItem(@FormParam("id") Long id) {
+    public Response deleteCartItem(@PathParam("id") Long id) {
         cartServiceImpl.deleteCartItem(id);
-        return null;
+        return Response.ok().build();
+    }
+
+    @POST
+    @Path("/updateQuantity/{id}/{type}")
+//    @RolesAllowed("BASIC")
+    @Transactional
+    public Response updateQuantity(@PathParam("id") Long id, @PathParam("type") String type) throws Exception {
+        System.out.println(type);
+        cartServiceImpl.updateQuantity(id, type);
+        return Response.ok().build();
     }
 
 

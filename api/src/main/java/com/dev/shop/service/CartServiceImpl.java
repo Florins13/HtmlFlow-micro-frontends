@@ -67,8 +67,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public void deleteCartItem(Long id) {
-        Cart currentCart = getUserCart();
-        cartItemRepository.deleteWhereCartIdAndCartItemId(id, currentCart.getId());
+        cartItemRepository.deleteWhereCartIdAndCartItemId(id, getUserCart().getId());
     }
 
     @Override

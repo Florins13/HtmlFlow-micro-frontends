@@ -14,9 +14,9 @@ COPY pom.xml .
 COPY src ./src
 COPY --chmod=755 mvnw .
 
-#RUN ./mvnw clean package -DskipTests -Dgpg.skip this wont work because htmlflow needs to fetch poet with the code I need
+RUN ./mvnw clean package -DskipTests -Dgpg.skip -X
 #for now lets copy the target and run it
-COPY target ./target
+#COPY target ./target
 
 # Expose the port Quarkus listens on (usually 8080)
 EXPOSE 8082

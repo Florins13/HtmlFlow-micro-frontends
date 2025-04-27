@@ -27,5 +27,4 @@ public class BikeController {
         return Response.ok(bikeDTOList).build();
     }
 
-
 }

@@ -57,7 +57,7 @@
             <groupId>com.github.xmlet</groupId>
             <artifactId>htmlflow</artifactId>
             <version>4.8-SNAPSHOT</version>
-            <scope>compile</scope>
+<!--            <scope>compile</scope>-->
         </dependency>
         <dependency>
             <groupId>io.reactivex.rxjava3</groupId>

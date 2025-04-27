@@ -8,15 +8,29 @@ class TeamRed extends Base {
         fetch(this.MFE_URL_RESOURCE).then(data =>{
             data.text().then(data => {
                 this.innerHTML = data;
-                const button = this.querySelector('#triggerOrder');
-                button.addEventListener('click', () => this.buttonTriggerOrders());
+                this.buildButtons();
+
             });
         }, ()=> this.innerHTML = "This team is unavailable!")
     }
 
+    buildButtons() {
+        const checkoutButton = this.querySelector('#triggerOrder');
+        const increaseQuantity = this.querySelectorAll('#increaseQuantity');
+        const decreaseQuantity = this.querySelectorAll('#decreaseQuantity');
+        const deleteCartItem = this.querySelectorAll('#deleteCartItem');
+        if (checkoutButton) {
+            checkoutButton.addEventListener('click', () => this.buttonTriggerOrders());
+        }
+        if (increaseQuantity && decreaseQuantity && deleteCartItem) {
+            increaseQuantity.forEach(button => button.addEventListener('click', () => this.handleQuantity('increase', button.getAttribute("value"))));
+            decreaseQuantity.forEach(button => button.addEventListener('click', () => this.handleQuantity('decrease', button.getAttribute("value"))));
+            deleteCartItem.forEach(button => button.addEventListener('click', () => this.deleteItem(button.getAttribute("value"))));
+        }
+    }
+
     async buttonTriggerOrders() {
         const endpoint = `http://localhost:8080/order/finalise`;
-        const payload = {};
         try {
             const response = await fetch(endpoint, {
                 method: 'POST',
@@ -25,20 +39,49 @@ class TeamRed extends Base {
                 },
                 body: JSON.stringify({})
             });
-
-            if (response.ok) {
-                // Dispatch a custom event named "postSuccess"
-                const event = new CustomEvent('triggerOrderEvent', {
-                    detail: { message: 'Post succeeded', payload },
-                    bubbles: true,    // Allows the event to bubble up the DOM tree
-                    composed: true    // Allows the event to cross shadow DOM boundaries
-                });
-                this.dispatchEvent(event);
-            } else {
-                console.error('POST failed with status:', response.status);
-            }
+            this.triggerEvent(response, 'triggerOrderEvent');
         } catch (error) {
             console.error('Error during POST:', error);
+        }
+    }
+
+    async handleQuantity(type, id) {
+        const endpoint = `http://localhost:8080/cart/updateQuantity/${id}/${type}`;
+        try {
+            const response = await fetch(endpoint, {
+                method: 'POST'
+            });
+
+            this.triggerEvent(response, 'triggerCartEvent');
+        } catch (error) {
+            console.error('Error during POST:', error);
+        }
+    }
+
+    async deleteItem(id) {
+        const endpoint = `http://localhost:8080/cart/deleteItem/${id}`;
+        try {
+            const response = await fetch(endpoint, {
+                method: 'POST'
+            });
+        this.triggerEvent(response, 'triggerCartEvent');
+
+        } catch (error) {
+            console.error('Error during POST:', error);
+        }
+    }
+
+    triggerEvent(response, eventName){
+        if (response.ok) {
+            // Dispatch a custom event named "postSuccess"
+            const event = new CustomEvent(eventName, {
+                detail: { message: 'Post succeeded' },
+                bubbles: true,    // Allows the event to bubble up the DOM tree
+                composed: true    // Allows the event to cross shadow DOM boundaries
+            });
+            this.dispatchEvent(event);
+        } else {
+            console.error('POST failed with status:', response.status);
         }
     }
 }
