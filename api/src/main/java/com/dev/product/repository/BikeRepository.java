@@ -2,6 +2,7 @@ package com.dev.product.repository;
 
 import com.dev.product.model.Bike;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.List;
@@ -14,6 +15,6 @@ public class BikeRepository implements PanacheRepository<Bike> {
     }
 
     public List<Bike> getAllBikes() {
-        return this.findAll().list();
+        return this.findAll(Sort.by("id")).list();
     }
 }
