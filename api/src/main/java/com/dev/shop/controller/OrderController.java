@@ -38,8 +38,7 @@ public class OrderController {
 //    @RolesAllowed("BASIC")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getOrders() {
-        List<OrderDTO> orderDTOList = orderServiceImpl.getOrders().stream().map(order -> new OrderDTO(order)).collect(Collectors.toList());
-//        String html = OrderView.orderHistoryView.render(orderDTOList);
+        List<OrderDTO> orderDTOList = orderServiceImpl.getOrders().stream().map(OrderDTO::new).collect(Collectors.toList());
         return Response.ok(orderDTOList).build();
     }
 }

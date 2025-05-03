@@ -35,7 +35,7 @@ public class HtmlMfeResource {
             page.html()
                     .head()
                     // Reference JS file in META-INF/resources/main.js
-                        .script().attrType(EnumTypeScriptType.MODULE).attrSrc("/main.js").__()
+                        .script().attrType(EnumTypeScriptType.MODULE).attrSrc("main.js").__()
                     .__()
                         .body()
                         .div().addAttr("style", "display: flex; justify-content: center;height: 100px;border: blue 1px solid;")

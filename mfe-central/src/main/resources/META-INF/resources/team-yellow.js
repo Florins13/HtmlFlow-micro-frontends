@@ -31,7 +31,7 @@ async function fetchStreamData(test, url) {
     for await (const value of response.body) {
         const uint8Array = new Uint8Array(value);
         const chunk = new TextDecoder().decode(uint8Array);
-        console.log(chunk)
+        // console.log(chunk)
 
         const table = test.getElementsByTagName("table");
         if(table.length){ // after table exists add each chunk inside the table
