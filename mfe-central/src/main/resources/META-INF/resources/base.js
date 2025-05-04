@@ -1,4 +1,4 @@
-export class Base extends HTMLElement {
+class Mfe extends HTMLElement {
     MFE_URL_RESOURCE = "";
     MFE_LISTENING_EVENT_NAME = "";
     MFE_TRIGGERS_EVENT_NAME = "";
@@ -13,6 +13,7 @@ export class Base extends HTMLElement {
         this.MFE_LISTENING_EVENT_NAME = this.getAttribute("mfe-listen-event");
         this.MFE_TRIGGERS_EVENT_NAME = this.getAttribute("mfe-trigger-event");
         document.addEventListener(this.MFE_LISTENING_EVENT_NAME, this.reloadFragment.bind(this));
+        this.loadFragment();
     }
 
     async fetchData() {
@@ -44,7 +45,13 @@ export class Base extends HTMLElement {
     }
 
     reloadFragment(){
-        throw new Error("You need to load implement this method in order to load the fragment!")
+        this.loadFragment();
+    }
+
+    loadFragment() {
+        this.fetchData().then(r => {
+            this.buildFragment(r);
+        });
     }
 
     disconnectedCallback() {
@@ -62,8 +69,5 @@ export class Base extends HTMLElement {
 
 
 
-export default Base;
-
-
-
-
+export default Mfe;
+window.customElements.define('micro-frontend', Mfe);

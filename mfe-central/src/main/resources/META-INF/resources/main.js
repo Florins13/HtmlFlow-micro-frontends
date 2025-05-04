@@ -1,6 +1,6 @@
-import Base from "./base.js";
+import Mfe from "./base.js";
 
-export class TeamBlack extends Base {
+export class TeamBlack extends Mfe {
     constructor() {
         super();
     }
@@ -10,9 +10,6 @@ export class TeamBlack extends Base {
         this.loadFragment();
     }
 
-    reloadFragment(){
-        this.loadFragment();
-    }
 
     loadFragment() {
         this.fetchData().then(r => {
@@ -34,7 +31,7 @@ export class TeamBlack extends Base {
     }
 }
 
-export class TeamRed extends Base {
+export class TeamRed extends Mfe {
     constructor() {
         super();
     }
@@ -144,17 +141,13 @@ export class TeamRed extends Base {
 
 }
 
-export class TeamGreen extends Base {
+export class TeamGreen extends Mfe {
     constructor() {
         super();
     }
 
     connectedCallback() {
         super.connectedCallback();
-        this.loadFragment();
-    }
-
-    reloadFragment(){
         this.loadFragment();
     }
 
