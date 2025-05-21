@@ -17,7 +17,8 @@
             <div style="display: flex; gap: 10px;">
                 <!-- Show Add to cart if inStock is true -->
                 <div th:if="${bike.inStock}">
-                    <button th:mfe-id="${bike.id}">Add to cart</button>
+                    <button id="test123" th:mfe-id="${bike.id}">Add to cart</button>
+<!--                    th:attr="onclick=|buttonEmitMfeEvent('${bike.id}')|"-->
                 </div>
                 <!-- Otherwise, show Out of stock -->
                 <div th:unless="${bike.inStock}">
@@ -27,4 +28,3 @@
         </div>
     </div>
 </main>
-<!--<script th:src="@{/js/some-page.js}"></script> Test with own js from the resources -->

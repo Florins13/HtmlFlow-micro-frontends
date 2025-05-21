@@ -1,36 +1,5 @@
 import Mfe from "./base.js";
 
-export class TeamBlack extends Mfe {
-    constructor() {
-        super();
-    }
-
-    connectedCallback() {
-        super.connectedCallback();
-        this.loadFragment();
-    }
-
-
-    loadFragment() {
-        this.fetchData().then(r => {
-            this.buildFragment(r);
-            const button = this.shadowRoot.querySelectorAll('button');
-            button.forEach(button => {
-                if (button) {
-                    // Attach a click event listener to the button
-                    button.addEventListener('click', () => this.buttonEmitMfeEvent(button.getAttribute("mfe-id")));
-                } else {
-                    console.warn("Button not found!", this);
-                }
-            })
-        });
-    }
-
-    buttonEmitMfeEvent(id){
-        this.triggerEvent(this.MFE_TRIGGERS_EVENT_NAME, `add to cart bike with ${id}`, {type: 'add', id: id})
-    }
-}
-
 export class TeamRed extends Mfe {
     constructor() {
         super();
@@ -162,7 +131,6 @@ export class TeamGreen extends Mfe {
 }
 
 
-window.customElements.define('team-black', TeamBlack);
 window.customElements.define('team-red', TeamRed);
 window.customElements.define('team-green', TeamGreen);
 

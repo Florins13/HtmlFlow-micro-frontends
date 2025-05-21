@@ -2,6 +2,7 @@ package htmlflow;
 
 import htmlflow.visitor.HtmlVisitor;
 import org.xmlet.htmlapifaster.Html;
+import org.xmlet.htmlapifaster.Script;
 
 import java.util.List;
 
@@ -25,8 +26,13 @@ public class HtmlMfe extends HtmlPage{
     @Override
     public Html<HtmlPage> html() {
         getVisitor().write(HEADER);
-        // we could set the script from microservice origin
-        // getVisitor().write("<script src='/test.js' type='module'></script>");
+        for (HtmlMfeConfig mfeConfig : mfeConfigList) {
+            // Only emit the tag when a script is configured
+            String scriptSrc = mfeConfig.getMfeScriptUrl();
+            if (scriptSrc != null && !scriptSrc.isEmpty()) {
+                getVisitor().write("<script type=\"module\" src=\"" + scriptSrc + "\"></script>");
+            }
+        }
         return new Html<>(this);
     }
 

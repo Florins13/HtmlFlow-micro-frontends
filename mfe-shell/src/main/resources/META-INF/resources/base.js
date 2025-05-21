@@ -12,7 +12,7 @@ class Mfe extends HTMLElement {
         this.MFE_URL_RESOURCE = this.getAttribute("mfe-url");
         this.MFE_LISTENING_EVENT_NAME = this.getAttribute("mfe-listen-event");
         this.MFE_TRIGGERS_EVENT_NAME = this.getAttribute("mfe-trigger-event");
-        document.addEventListener(this.MFE_LISTENING_EVENT_NAME, this.reloadFragment.bind(this));
+        window.addEventListener(this.MFE_LISTENING_EVENT_NAME, this.reloadFragment.bind(this));
         this.loadFragment();
     }
 
@@ -41,16 +41,21 @@ class Mfe extends HTMLElement {
             bubbles: bubbles,    // Allows the event to bubble up the DOM tree
             composed: composed    // Allows the event to cross shadow DOM boundaries
         });
-        this.dispatchEvent(event);
+        dispatchEvent(event);
     }
 
     reloadFragment(){
         this.loadFragment();
     }
 
+    someTest(){
+        console.log("trigger function from mfe script")
+    }
+
     loadFragment() {
         this.fetchData().then(r => {
             this.buildFragment(r);
+            this.dispatchEvent(new Event('fragment-ready', { bubbles: true, composed: true }));
         });
     }
 
