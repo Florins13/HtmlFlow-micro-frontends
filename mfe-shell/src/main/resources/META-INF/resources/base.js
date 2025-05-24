@@ -1,7 +1,10 @@
 class Mfe extends HTMLElement {
-    MFE_URL_RESOURCE = "";
-    MFE_LISTENING_EVENT_NAME = "";
-    MFE_TRIGGERS_EVENT_NAME = "";
+    mfeName = "";
+    mfeUrlResource = "";
+    mfeListeningEventName = "";
+    mfeTriggerEventName = "";
+    readyEventSuffix = "-fragment-ready";
+    mfeStylingUrl = "";
 
     constructor() {
         super();
@@ -9,17 +12,19 @@ class Mfe extends HTMLElement {
     }
 
     connectedCallback() {
-        this.MFE_URL_RESOURCE = this.getAttribute("mfe-url");
-        this.MFE_LISTENING_EVENT_NAME = this.getAttribute("mfe-listen-event");
-        this.MFE_TRIGGERS_EVENT_NAME = this.getAttribute("mfe-trigger-event");
-        window.addEventListener(this.MFE_LISTENING_EVENT_NAME, this.reloadFragment.bind(this));
+        this.mfeUrlResource = this.getAttribute("mfe-url");
+        this.mfeName = this.getAttribute("mfe-name");
+        this.mfeStylingUrl = this.getAttribute("mfe-styling-url");
+        this.mfeListeningEventName = this.getAttribute("mfe-listen-event");
+        this.mfeTriggerEventName = this.getAttribute("mfe-trigger-event");
+        window.addEventListener(this.mfeListeningEventName, this.reloadFragment.bind(this));
         this.loadFragment();
     }
 
     async fetchData() {
-        const response = await fetch(this.MFE_URL_RESOURCE);
+        const response = await fetch(this.mfeUrlResource);
         if (!response.ok) {
-            throw new Error(`Failed to fetch ${this.MFE_URL_RESOURCE}: ${response.status}`);
+            throw new Error(`Failed to fetch ${this.mfeUrlResource}: ${response.status}`);
         }
         return response.text();
     }
@@ -28,10 +33,18 @@ class Mfe extends HTMLElement {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         this.shadowRoot.innerHTML = null;
+
         const fragment = document.createDocumentFragment();
+        const link = document.createElement('link');
+        if(this.mfeStylingUrl){
+            link.setAttribute('rel', 'stylesheet');
+            link.setAttribute('href', this.mfeStylingUrl);
+            fragment.append(link);
+        }
         doc.body.childNodes.forEach(child => {
             fragment.append(child)
-        })
+        });
+
         return this.shadowRoot.appendChild(fragment);
     }
 
@@ -55,7 +68,8 @@ class Mfe extends HTMLElement {
     loadFragment() {
         this.fetchData().then(r => {
             this.buildFragment(r);
-            this.dispatchEvent(new Event('fragment-ready', { bubbles: true, composed: true }));
+            console.log("eventname: ", this.mfeName + this.readyEventSuffix)
+            this.dispatchEvent(new Event(this.mfeName + this.readyEventSuffix, { bubbles: true, composed: true }));
         });
     }
 
@@ -72,7 +86,4 @@ class Mfe extends HTMLElement {
     }
 }
 
-
-
-export default Mfe;
 window.customElements.define('micro-frontend', Mfe);

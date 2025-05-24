@@ -1,26 +1,41 @@
-<div style="display: flex;gap: 20px;flex-wrap: wrap;justify-content: space-evenly;min-height: 85%">
+<div class="cart-container">
     {#for cartItem in cart.cartItems}
-        <div style="display: flex;gap: 20px;flex-wrap: wrap;justify-content: space-evenly;">
-            <div class="bike__box" style="display: flex;align-content: center;flex-direction: column;">
-                <button id="deleteCartItem" value="{cartItem.getId()}" style="width: 25px">X</button>
+        <div class="cart-item">
+            <div class="bike-box">
+                <button id="deleteCartItem"
+                        class="btn btn-delete"
+                        value="{cartItem.getId()}">X</button>
+
                 <h4>Model: {cartItem.getBike().getModel()}</h4>
 
-                <img src="/{cartItem.getBike().getImageSource()}" height="70px" width="70px">
+                <img src="{cartItem.getBike().getImageSource()}" class="bike-img">
+
                 <span>Stock: {cartItem.getBike().getStock()}</span>
                 <span>Details: {cartItem.getBike().getDetails()}</span>
                 <span>Electric: {cartItem.getBike().isElectric()}</span>
                 <span>Price: {cartItem.getBike().getPrice()}€</span>
-                <div style="display: flex;align-items: center;gap: 20px;">
-                    <button id="decreaseQuantity" value="{cartItem.getId()}" style="width: 85px">Decrease -</button>
-                    <p>{cartItem.getQuantity()}</p>
-                    <button id="increaseQuantity" value="{cartItem.getId()}" style="width: 85px">Increase +</button>
-                </div>
 
+                <div class="quantity-group">
+                    <button id="decreaseQuantity"
+                            class="btn btn-qty"
+                            value="{cartItem.getId()}">Decrease -</button>
+
+                    <p>{cartItem.getQuantity()}</p>
+
+                    <button id="increaseQuantity"
+                            class="btn btn-qty"
+                            value="{cartItem.getId()}">Increase +</button>
+                </div>
             </div>
         </div>
     {/for}
 </div>
-<div style="display: flex;flex-direction: row;justify-content: end;gap: 20px;padding-right: 50px;">
+
+<div class="cart-summary">
     <h3>Total: {cart.cartTotal} €</h3>
-       <button id="triggerOrder" {#if cart.cartIsEmpty()} disabled {/if} style="height: 30px;align-self: center;">Checkout</button>
+    <button id="triggerOrder"
+            class="btn btn-checkout"
+    {#if cart.cartIsEmpty()} disabled {/if}>
+        Checkout
+    </button>
 </div>

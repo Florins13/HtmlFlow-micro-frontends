@@ -204,8 +204,11 @@ public abstract class HtmlVisitor extends ElementVisitor {
     @Override
     public <E extends Element> void visitMfe(E e, MfeConfiguration mfeConfiguration) {
         e.custom(mfeConfiguration.getMfeElementName()).addAttr("mfe-url", mfeConfiguration.getMfeUrlResource());
+        e.getVisitor().visitAttribute("mfe-name", mfeConfiguration.getMfeName());
+        e.getVisitor().visitAttribute("mfe-styling-url", mfeConfiguration.getMfeStylingUrl());
         e.getVisitor().visitAttribute("mfe-listen-event", mfeConfiguration.getMfeListeningEventName());
         e.getVisitor().visitAttribute("mfe-trigger-event", mfeConfiguration.getMfeTriggerEventName());
+
     }
 
     /*=========================================================================*/

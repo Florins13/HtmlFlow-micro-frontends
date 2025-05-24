@@ -34,6 +34,10 @@ public class Bike {
         return imageSource;
     }
 
+    public void setImageSource(String imageSource) {
+        this.imageSource = imageSource;
+    }
+
     public String getDetails() {
         return details;
     }

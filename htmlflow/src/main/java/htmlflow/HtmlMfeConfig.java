@@ -5,19 +5,29 @@ import org.xmlet.htmlapifaster.MfeConfiguration;
 
 public class HtmlMfeConfig implements MfeConfiguration {
     private final String mfeUrlResource;
-    private final String mfeElementName;
+    private final String mfeName;
     private final String mfeListeningEventName;
     private final String mfeTriggersEventName;
-    private final String mfeScriptUrl;
-    private final String mfeCssName;
+    private String mfeElementName = "micro-frontend";
+    private String mfeScriptUrl = null;
+    private String mfeStylingUrl = null;
 
-    public HtmlMfeConfig(String mfeUrlResource, String mfeElementName, String mfeListeningEventName, String mfeTriggersEventName, String mfeScriptUrl, String mfeCssName) {
-        this.mfeCssName = mfeCssName;
+    public HtmlMfeConfig(String mfeUrlResource, String mfeName, String mfeListeningEventName, String mfeTriggersEventName) {
         this.mfeUrlResource = mfeUrlResource;
-        this.mfeElementName = mfeElementName;
+        this.mfeName = mfeName;
         this.mfeListeningEventName = mfeListeningEventName;
         this.mfeTriggersEventName = mfeTriggersEventName;
+    }
+
+    public HtmlMfeConfig(String mfeUrlResource, String mfeName, String mfeListeningEventName, String mfeTriggersEventName, String mfeScriptUrl, String mfeStylingUrl) {
+        this(mfeUrlResource, mfeName, mfeListeningEventName, mfeTriggersEventName);
         this.mfeScriptUrl = mfeScriptUrl;
+        this.mfeStylingUrl = mfeStylingUrl;
+    }
+
+    public HtmlMfeConfig(String mfeUrlResource, String mfeName, String mfeElementName, String mfeListeningEventName, String mfeTriggersEventName, String mfeScriptUrl, String mfeStylingUrl) {
+        this(mfeUrlResource, mfeName, mfeListeningEventName, mfeTriggersEventName, mfeScriptUrl, mfeStylingUrl);
+        this.mfeElementName = mfeElementName;
     }
 
     @Override
@@ -25,6 +35,8 @@ public class HtmlMfeConfig implements MfeConfiguration {
         return mfeUrlResource;
     }
 
+    @Override
+    public String getMfeName() { return mfeName; }
     @Override
     public String getMfeElementName() {
         return mfeElementName;
@@ -46,7 +58,7 @@ public class HtmlMfeConfig implements MfeConfiguration {
     }
 
     @Override
-    public String getMfeCssName() {
-        return mfeCssName;
+    public String getMfeStylingUrl() {
+        return mfeStylingUrl;
     }
 }

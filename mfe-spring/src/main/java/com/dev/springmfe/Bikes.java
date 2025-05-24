@@ -31,6 +31,8 @@ public class Bikes {
         ObjectMapper mapper = new ObjectMapper();
         List<Bike> bikes = mapper.readValue(responseData, new TypeReference<>() {
         });
+        bikes.forEach(bike -> bike.setImageSource("http://localhost:8081/images/" + bike.getImageSource()));
+
         model.addAttribute("bikes", bikes);
         return "bikes";
     }

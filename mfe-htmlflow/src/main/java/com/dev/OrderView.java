@@ -48,8 +48,6 @@ public class OrderView {
                                 .td().text(order.getUsername()).__()
                                 .__();
                     }
-                })
-                .__()
-                .__();
+                });
     });
 }
