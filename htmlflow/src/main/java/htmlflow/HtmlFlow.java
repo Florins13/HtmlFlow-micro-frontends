@@ -57,10 +57,10 @@ public class HtmlFlow {
         return pre;
     }
 
-    private static PreprocessingVisitor preprocessingMfe(HtmlTemplate template, boolean isIndented, List<HtmlMfeConfig> mfeConfigs) {
-        PreprocessingVisitor processView = new PreprocessingVisitor(isIndented);
+    private static PreprocessingVisitorMfe preprocessingMfe(HtmlTemplate template, boolean isIndented) {
+        PreprocessingVisitorMfe processView = new PreprocessingVisitorMfe(isIndented);
         // here we are creating the HtmlMfe object, what about threadSafety? I guess I am going to need this method if we want to implement that similar to HtmlView
-        HtmlMfe preView = new HtmlMfe( mfeConfigs,processView);
+        HtmlMfe preView = new HtmlMfe(processView);
         // first process
         template.resolve(preView);
         // second process
@@ -168,10 +168,10 @@ public class HtmlFlow {
         return new HtmlViewAsync<>(new HtmlViewVisitorAsync(isIndented, pre.getFirst()), template, threadSafe);
     }
 
-    public static HtmlMfe mfe(List<HtmlMfeConfig> mfeConfigs, HtmlTemplate template) {
-        PreprocessingVisitor pre = preprocessingMfe(template, false, mfeConfigs);
+    public static HtmlMfe mfe(HtmlTemplate template) {
+        PreprocessingVisitorMfe pre = preprocessingMfe(template, false);
         // we can process only once and pass the pre here for example since we want to process once.
-        return new HtmlMfe(mfeConfigs, pre);
+        return new HtmlMfe(pre);
 //        return new HtmlMfe( new HtmlMfeVisitor(new StringBuilder(), false, pre.getFirst()));
     }
 

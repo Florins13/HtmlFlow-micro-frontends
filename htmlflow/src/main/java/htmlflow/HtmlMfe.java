@@ -1,43 +1,31 @@
 package htmlflow;
 
-import htmlflow.visitor.HtmlVisitor;
+import htmlflow.visitor.HtmlMfeVisitor;
 import org.xmlet.htmlapifaster.Html;
-
-import java.util.List;
+import org.xmlet.htmlapifaster.MfeConfiguration;
 
 
 public class HtmlMfe extends HtmlPage{
-    private final HtmlVisitor visitor;
-    private final List<HtmlMfeConfig> mfeConfigList;
+    private final HtmlMfeVisitor visitor;
 
-    public HtmlMfe(List<HtmlMfeConfig> mfeConfigList, HtmlVisitor visitor){
+    public HtmlMfe(HtmlMfeVisitor visitor){
         this.visitor = visitor;
-        this.mfeConfigList = mfeConfigList;
     }
 
 
-    public HtmlVisitor getVisitor() {
+    public HtmlMfeVisitor getVisitor() {
         return visitor;
     };
 
     @Override
     public Html<HtmlPage> html() {
         getVisitor().write(HEADER);
-        String scriptName = "base.js";
-        getVisitor().write("<script type=\"module\" src=\"" + scriptName + "\"></script>");
-        for (HtmlMfeConfig mfeConfig : mfeConfigList) {
-            // Only emit the tag when a script is configured
-            String scriptSrc = mfeConfig.getMfeScriptUrl();
-            if (scriptSrc != null && !scriptSrc.isEmpty()) {
-                getVisitor().write("<script type=\"module\" src=\"" + scriptSrc + "\"></script>");
-            }
-        }
         return new Html<>(this);
     }
 
     @Override
     public HtmlPage setIndented(boolean isIndented) {
-        return new HtmlMfe(this.mfeConfigList, visitor.clone(isIndented));
+        return new HtmlMfe(visitor.clone(isIndented));
     }
 
     @Override
@@ -53,6 +41,37 @@ public class HtmlMfe extends HtmlPage{
     public String render() {
         StringBuilder str = (StringBuilder) visitor.out();
         getVisitor().resolve(null);
-        return str.toString();
+
+        // Get the generated HTML
+        String html = str.toString();
+
+        // Build script tags
+        StringBuilder scriptTags = new StringBuilder();
+
+        // Add base script
+        scriptTags.append("<script type=\"module\" src=\"base.js\"></script>");
+
+        // Add script tags for each MFE configuration
+        for (MfeConfiguration mfeConfig : this.getVisitor().getMfePage()) {
+            String scriptSrc = mfeConfig.getMfeScriptUrl();
+            if (scriptSrc != null && !scriptSrc.isEmpty()) {
+                scriptTags.append("<script type=\"module\" src=\"")
+                        .append(scriptSrc)
+                        .append("\"></script>");
+            }
+
+            // interestingly it loads faster the css if they are also added in the head.
+//            String cssSrc = mfeConfig.getMfeStylingUrl();
+//            if (cssSrc != null && !cssSrc.isEmpty()) {
+//                scriptTags.append("<link rel=\"stylesheet\" href=\"")
+//                        .append(cssSrc)
+//                        .append("\">");
+//            }
+
+        }
+
+        // Insert script tags before the closing </head> tag
+        return html.replaceFirst("</head>", scriptTags.toString() + "</head>");
+
     }
 }

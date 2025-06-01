@@ -24,16 +24,12 @@ public class HtmlMfeResource {
     public Response getHtml() {
         List<HtmlMfeConfig> mfeConfigList = new ArrayList<>();
 
-        HtmlMfeConfig mfeBike = new HtmlMfeConfig("http://localhost:8081/bikes", "mfe1", "triggerBikeEvent", "triggerCartEvent", "http://localhost:8081/js/mfe-spring.js", "http://localhost:8081/css/style.css");
+        HtmlMfeConfig mfeBike = new HtmlMfeConfig("http://localhost:8081/bikes", "mfe1", "triggerBikeEvent", "triggerCartEvent", "http://localhost:8081/js/mfe-bikes.js", "http://localhost:8081/css/style.css");
         HtmlMfeConfig mfeCart = new HtmlMfeConfig("http://localhost:8083/cart", "mfe2", "triggerCartEvent", "triggerOrderEvent", "http://localhost:8083/mfe-cart.js", "http://localhost:8083/style.css");
         HtmlMfeConfig mfeOrder = new HtmlMfeConfig("http://localhost:8084/order/history", "mfe3", "triggerOrderEvent", "triggerBikeEvent", "http://localhost:8084/mfe-order.js", "");
         HtmlMfeConfig mfeStream = new HtmlMfeConfig("http://localhost:8080/html-chunked/stream", "mfe3","team-yellow", "test", "test", "", "");
-        mfeConfigList.add(mfeBike);
-        mfeConfigList.add(mfeCart);
-        mfeConfigList.add(mfeOrder);
-        mfeConfigList.add(mfeStream);
 
-        HtmlMfe mfe = HtmlFlow.mfe(mfeConfigList , page -> {
+        HtmlMfe mfe = HtmlFlow.mfe(page -> {
             page.html()
                     .head()
                     // Reference JS file in META-INF/resources/main.js
