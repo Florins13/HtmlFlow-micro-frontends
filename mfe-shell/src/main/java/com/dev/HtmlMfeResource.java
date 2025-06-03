@@ -22,12 +22,10 @@ public class HtmlMfeResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public Response getHtml() {
-        List<HtmlMfeConfig> mfeConfigList = new ArrayList<>();
-
         HtmlMfeConfig mfeBike = new HtmlMfeConfig("http://localhost:8081/bikes", "mfe1", "triggerBikeEvent", "triggerCartEvent", "http://localhost:8081/js/mfe-bikes.js", "http://localhost:8081/css/style.css");
         HtmlMfeConfig mfeCart = new HtmlMfeConfig("http://localhost:8083/cart", "mfe2", "triggerCartEvent", "triggerOrderEvent", "http://localhost:8083/mfe-cart.js", "http://localhost:8083/style.css");
         HtmlMfeConfig mfeOrder = new HtmlMfeConfig("http://localhost:8084/order/history", "mfe3", "triggerOrderEvent", "triggerBikeEvent", "http://localhost:8084/mfe-order.js", "");
-        HtmlMfeConfig mfeStream = new HtmlMfeConfig("http://localhost:8080/html-chunked/stream", "mfe3","team-yellow", "test", "test", "", "");
+        HtmlMfeConfig mfeStream = new HtmlMfeConfig("http://localhost:8080/html-chunked/stream", "mfe4","triggerStreamEvent", "", "", "", true);
 
         HtmlMfe mfe = HtmlFlow.mfe(page -> {
             page.html()
@@ -48,7 +46,7 @@ public class HtmlMfeResource {
                             .div().addAttr("style", "border: green 1px solid; margin: 20px")
                                 .mfe(mfeOrder).__()
                         .__()
-                    .div().addAttr("style", "display: flex; justify-content: center;height: 150px;border: yellow 1px solid;")
+                    .div().addAttr("style", "display: flex; justify-content: center;height: 50px;border: yellow 1px solid;")
                         .div().mfe(mfeStream).__()
                     .__()
                     .__();

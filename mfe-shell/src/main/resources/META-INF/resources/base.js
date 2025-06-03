@@ -5,6 +5,7 @@ class Mfe extends HTMLElement {
     mfeTriggerEventName = "";
     readyEventSuffix = "-fragment-ready";
     mfeStylingUrl = "";
+    isMfeStreamingData = "";
 
     constructor() {
         super();
@@ -17,6 +18,7 @@ class Mfe extends HTMLElement {
         this.mfeStylingUrl = this.getAttribute("mfe-styling-url");
         this.mfeListeningEventName = this.getAttribute("mfe-listen-event");
         this.mfeTriggerEventName = this.getAttribute("mfe-trigger-event");
+        this.isMfeStreamingData = this.getAttribute("mfe-stream-data");
         window.addEventListener(this.mfeListeningEventName, this.reloadFragment.bind(this));
         this.loadFragment();
     }
@@ -27,6 +29,17 @@ class Mfe extends HTMLElement {
             throw new Error(`Failed to fetch ${this.mfeUrlResource}: ${response.status}`);
         }
         return response.text();
+    }
+
+    async fetchStreamData() {
+        this.wrapper = document.createElement('div');
+        const response = await fetch(this.mfeUrlResource);
+        for await (const value of response.body) {
+            const uint8Array = new Uint8Array(value);
+            const chunk = new TextDecoder().decode(uint8Array);
+            this.wrapper.insertAdjacentHTML('beforeend', chunk);
+            this.shadowRoot.appendChild(this.wrapper);
+        }
     }
 
     buildFragment(html) {
@@ -61,16 +74,17 @@ class Mfe extends HTMLElement {
         this.loadFragment();
     }
 
-    someTest(){
-        console.log("trigger function from mfe script")
-    }
-
     loadFragment() {
-        this.fetchData().then(r => {
-            this.buildFragment(r);
-            console.log("eventname: ", this.mfeName + this.readyEventSuffix)
-            this.dispatchEvent(new Event(this.mfeName + this.readyEventSuffix, { bubbles: true, composed: true }));
-        });
+        if(this.isMfeStreamingData === "true"){
+            this.fetchStreamData().then(r => console.info("Finished fetching stream!")).catch(err=> console.error(err));
+        }
+        else{
+            this.fetchData().then(r => {
+                this.buildFragment(r);
+                console.log("eventname: ", this.mfeName + this.readyEventSuffix)
+                this.dispatchEvent(new Event(this.mfeName + this.readyEventSuffix, { bubbles: true, composed: true }));
+            });
+        }
     }
 
     disconnectedCallback() {

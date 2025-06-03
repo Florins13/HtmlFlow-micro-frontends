@@ -32,6 +32,10 @@ public class HtmlMfeVisitor extends HtmlVisitor {
         e.getVisitor().visitAttribute("mfe-styling-url", mfeConfiguration.getMfeStylingUrl());
         e.getVisitor().visitAttribute("mfe-listen-event", mfeConfiguration.getMfeListeningEventName());
         e.getVisitor().visitAttribute("mfe-trigger-event", mfeConfiguration.getMfeTriggerEventName());
+        if(mfeConfiguration.isMfeStreamingData()){
+            e.getVisitor().visitAttribute("mfe-stream-data", String.valueOf(mfeConfiguration.isMfeStreamingData()));
+        }
+
     }
 
     @Override

@@ -23,19 +23,16 @@ public class StreamResource {
 
     private static long timeout = 1000;
     static final Observable<String> model = Observable
-            .fromArray("CR7", "Lebron James", "Stephen Curry", "Nigel Mansel", "Rossi")
+            .fromArray("Streaming ", "my ", "footer ", "!")
             .concatMap(item -> Observable.just(item).delay(timeout, TimeUnit.MILLISECONDS));
 
     public static void viewTopScores(Writer writer) throws IOException {
-        writer.write("<table><thead><tr><th>Top Scorers</th></tr></thead>");
-        writer.write("<tbody>");
-        writer.flush();
+//        writer.write("<h1>");
         model.blockingForEach(item -> {
-            writer.write("<tr><td>" + item + "</td></tr>");
+            writer.write("<span>" + item + "</span>");
             writer.flush();
         });
-        writer.write("</tbody></table>");
-        writer.flush();
+//        writer.write("</h1>");
         writer.close();
     }
 
