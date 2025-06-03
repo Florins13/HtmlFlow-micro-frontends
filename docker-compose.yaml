@@ -47,7 +47,7 @@ services:
     ports:
       - "8083:8083"
     environment:
-      - API_URL=http://api:8080/cart
+      - API_URL=http://api:8080
 
   mfe-htmlflow:
     build:
@@ -59,14 +59,14 @@ services:
     ports:
       - "8084:8084"
     environment:
-      - API_URL=http://api:8080/history
+      - API_URL=http://api:8080
 
-  htmlflow-dev:
-    image: htmlflow-dev
+  shell:
+    image: shell
     build:
-      context: ./htmlflow-dev
+      context: ./mfe-shell
       dockerfile: Dockerfile
-    container_name: htmlflow-dev
+    container_name: mfe-shell
     depends_on:
       - api
       - mfe-spring
