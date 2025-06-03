@@ -12,8 +12,6 @@ import java.util.function.BiConsumer;
 import static htmlflow.visitor.PreprocessingVisitor.HtmlContinuationSetter.setNext;
 
 public class PreprocessingVisitorMfe extends HtmlMfeVisitor{
-    private static final String NOT_SUPPORTED_ERROR =
-            "This is a PreprocessingMfeVisitor used to compile mfe templates and not intended to support HTML views!";
     /**
      * The internal String builder beginning index of a static HTML block.
      */
@@ -58,7 +56,7 @@ public class PreprocessingVisitorMfe extends HtmlMfeVisitor{
      */
     @Override
     public <E extends Element, U> void visitDynamic(E element, BiConsumer<E, U> dynamicHtmlBlock) {
-        throw new UnsupportedOperationException(NOT_SUPPORTED_ERROR);
+        throw new UnsupportedOperationException("Dynamic not allowed in HtmlMfe. Should use mfe() to manage an mfe view.");
     }
 
 

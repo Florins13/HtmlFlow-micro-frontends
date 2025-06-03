@@ -19,7 +19,7 @@ public class HtmlMfeVisitor extends HtmlVisitor {
 
     @Override
     public <E extends Element, U> void visitDynamic(E e, BiConsumer<E, U> biConsumer) {
-
+        throw new IllegalStateException("Wrong use of dynamic() in a HtmlMfe! Use HtmlView to produce a dynamic view.");
     }
 
     @Override
@@ -40,12 +40,12 @@ public class HtmlMfeVisitor extends HtmlVisitor {
 
     @Override
     public <M, E extends Element> void visitAwait(E e, AwaitConsumer<E, M> awaitConsumer) {
-
+        throw new IllegalStateException("Wrong use of await() in HtmlMfe! Use HtmlFlow.viewAsync() to produce an async view.");
     }
 
     @Override
     public <M, E extends Element> void visitSuspending(E e, SuspendConsumer<E, M> suspendConsumer) {
-
+        throw new IllegalStateException("Wrong use of suspending() in HtmlMfe! Use HtmlFlow.viewSuspend() to produce a suspendable view.");
     }
 
     @Override

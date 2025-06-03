@@ -42,13 +42,8 @@ public class HtmlMfe extends HtmlPage{
         StringBuilder str = (StringBuilder) visitor.out();
         getVisitor().resolve(null);
 
-        // Get the generated HTML
         String html = str.toString();
-
-        // Build script tags
         StringBuilder scriptTags = new StringBuilder();
-
-        // Add base script
         scriptTags.append("<script type=\"module\" src=\"base.js\"></script>");
 
         // Add script tags for each MFE configuration
@@ -70,8 +65,7 @@ public class HtmlMfe extends HtmlPage{
 
         }
 
-        // Insert script tags before the closing </head> tag
-        return html.replaceFirst("</head>", scriptTags.toString() + "</head>");
+        return html.replaceFirst("</head>", scriptTags + "</head>");
 
     }
 }

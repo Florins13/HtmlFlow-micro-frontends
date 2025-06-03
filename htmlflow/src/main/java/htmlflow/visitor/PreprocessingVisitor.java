@@ -113,7 +113,7 @@ public class PreprocessingVisitor extends HtmlVisitor {
 
     @Override
     public <E extends Element> void visitMfe(E e, MfeConfiguration mfeConfiguration) {
-        throw new UnsupportedOperationException("Mfe not allowed in HtmlView. Should use htmlFlow to manage an Mfe view.");
+        throw new UnsupportedOperationException("Mfe not allowed in HtmlView. Should use mfe to manage an Mfe view.");
     }
 
     @Override
