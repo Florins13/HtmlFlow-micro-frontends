@@ -6,7 +6,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
-@RegisterRestClient(baseUri = "http://localhost:8080") // your remote base URL
+@RegisterRestClient(configKey = "cart-client")
 @Path("/cart")
 public interface CartClient {
 

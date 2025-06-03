@@ -9,7 +9,7 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 import java.util.List;
 
-@RegisterRestClient(baseUri = "http://localhost:8080") // your remote base URL
+@RegisterRestClient(configKey = "order-client")
 @Path("/order/history")
 public interface OrderClient {
 
