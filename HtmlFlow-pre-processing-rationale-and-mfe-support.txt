@@ -1,0 +1,49 @@
+HtmlFlow.mfe():
+
+    1. PreprocessingVisitor pre = preprocessingMfe(template, isIndented);
+
+        // 1st rendering wihch calls the Function defined as the template and collects static HTML in internal out StringBuffer
+        template.resolve(preView); 
+
+        // 2nd Just invokes the resolve in PreprocessingVisitor, which only creates 
+        // the last HtmlContinuationStatic (for MFE maybe just a single one equals to first)
+        // with the remaining static HTML collected in the internal StringBuffer out.
+        preView.getVisitor().resolve(null);
+
+    2. return new HtmlView<>(
+        (() -> new HtmlViewVisitor(out, isIndented, pre.getFirst())),
+        template,
+        threadSafe);
+
+
+HtmlContinuationStatic      ->    HtmlContinuationDynamic         ->        HtmlContinuationSyncStatic      
+
+"<html><head>...<tbody>""         BiConsumer<E, T> consumer                   "</tbody></table>..."
+
+                                 e.g. (tbody, stocks) -> stocks.forEach(stock -> tableRowView(tbody, stock)
+
+
+X HtmlMfeVisitor (Remover)
+
+Modificar - HtmlVisitor <= add = HtmlMfeVisitor
+
+PreprocessingVisitorMfe ---|> PreprocessingVisitor ---|> HtmlVisitor
+
+
+PreprocessingVisitorMfe:
+
+ override resolve() {
+    super.resolve() // To create the last node HtmlContinuationSyncStatic
+
+    // Begin at first HtmlContinuation and look for the HtmlContinuationSyncStatic 
+    // with the staticHtmlBlock containing </script> 
+    var curr = first
+    while(curr != null) {
+        if(curr.contains("</head>")) {
+            var html = curr.staticHtmlBlock.replaceFirst("</head>", scriptTags.toString() + "</head>");
+            curr.staticHtmlBlock = html // !!!!! staticHtmlBlock is final => Via Reflect setAccessible(true)
+            break;
+        }
+    }
+}
+
