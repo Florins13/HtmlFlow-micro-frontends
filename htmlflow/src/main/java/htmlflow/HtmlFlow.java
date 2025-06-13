@@ -59,14 +59,11 @@ public class HtmlFlow {
 
     private static PreprocessingVisitorMfe preprocessingMfe(HtmlTemplate template, boolean isIndented) {
         PreprocessingVisitorMfe processView = new PreprocessingVisitorMfe(isIndented);
-        // here we are creating the HtmlMfe object, what about threadSafety? I guess I am going to need this method if we want to implement that similar to HtmlView
-        HtmlMfe preView = new HtmlMfe(processView);
+        HtmlView<?> preView = new HtmlView<>(() -> processView, template, false);
         // first process
         template.resolve(preView);
         // second process
-        // for some reason I am not understanding why we are resolving twice, this is done on the other examples as well.
-        // this second resolve seems to be related to the pre.getFirst() method.
-//        preView.getVisitor().resolve(null);
+        preView.getVisitor().resolve(null);
         return processView;
     }
 
@@ -168,11 +165,12 @@ public class HtmlFlow {
         return new HtmlViewAsync<>(new HtmlViewVisitorAsync(isIndented, pre.getFirst()), template, threadSafe);
     }
 
-    public static HtmlMfe mfe(HtmlTemplate template) {
+    public static <M>HtmlView<M> mfe(HtmlTemplate template) {
         PreprocessingVisitorMfe pre = preprocessingMfe(template, false);
-        // we can process only once and pass the pre here for example since we want to process once.
-        return new HtmlMfe(pre);
-//        return new HtmlMfe( new HtmlMfeVisitor(new StringBuilder(), false, pre.getFirst()));
+        return new HtmlView<>(
+                (() -> new HtmlViewVisitor(new StringBuilder(), true, pre.getFirst())),
+                template,
+                false);
     }
 
 

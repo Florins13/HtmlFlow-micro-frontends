@@ -25,11 +25,14 @@
 package htmlflow.visitor;
 
 import com.google.common.html.HtmlEscapers;
+import htmlflow.HtmlMfeConfig;
 import htmlflow.exceptions.HtmlFlowAppendException;
 import org.xmlet.htmlapifaster.*;
 
 import java.io.IOException;
 import java.lang.Object;
+import java.util.ArrayList;
+import java.util.List;
 
 import static htmlflow.visitor.Tags.*;
 
@@ -54,6 +57,18 @@ public abstract class HtmlVisitor extends ElementVisitor {
      * It the HTML output should be indented or not.
      */
     public final boolean isIndented;
+
+
+    private final List<HtmlMfeConfig> mfePage = new ArrayList<>();
+
+    public void addMfePage(HtmlMfeConfig mfePage) {
+        this.mfePage.add(mfePage);
+    }
+
+    public List<HtmlMfeConfig> getMfePage() {
+        return mfePage;
+    }
+
     /**
      * keep track of current indentation.
      */
@@ -199,6 +214,24 @@ public abstract class HtmlVisitor extends ElementVisitor {
     public final <R> void visitComment(Text<? extends Element, R> text) {
         newlineAndIndent();
         addComment(out, text.getValue());
+    }
+
+
+
+    @Override
+    public <E extends Element> void visitMfe(E e, MfeConfiguration mfeConfiguration) {
+        // collect the mfe configuration
+        addMfePage((HtmlMfeConfig) mfeConfiguration);
+
+        e.custom(mfeConfiguration.getMfeElementName()).addAttr("mfe-url", mfeConfiguration.getMfeUrlResource());
+        e.getVisitor().visitAttribute("mfe-name", mfeConfiguration.getMfeName());
+        e.getVisitor().visitAttribute("mfe-styling-url", mfeConfiguration.getMfeStylingUrl());
+        e.getVisitor().visitAttribute("mfe-listen-event", mfeConfiguration.getMfeListeningEventName());
+        e.getVisitor().visitAttribute("mfe-trigger-event", mfeConfiguration.getMfeTriggerEventName());
+        if(mfeConfiguration.isMfeStreamingData()){
+            e.getVisitor().visitAttribute("mfe-stream-data", String.valueOf(mfeConfiguration.isMfeStreamingData()));
+        }
+
     }
 
 

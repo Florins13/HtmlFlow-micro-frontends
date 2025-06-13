@@ -3,18 +3,13 @@ package com.dev;
 
 
 import htmlflow.HtmlFlow;
-import htmlflow.HtmlMfe;
 import htmlflow.HtmlMfeConfig;
+import htmlflow.HtmlView;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.xmlet.htmlapifaster.EnumRelType;
-import org.xmlet.htmlapifaster.EnumTypeScriptType;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Path("/mfe")
 public class HtmlMfeResource {
@@ -27,7 +22,7 @@ public class HtmlMfeResource {
         HtmlMfeConfig mfeOrder = new HtmlMfeConfig("http://localhost:8084/order/history", "mfe3", "triggerOrderEvent", "triggerBikeEvent", "http://localhost:8084/mfe-order.js", "");
         HtmlMfeConfig mfeStream = new HtmlMfeConfig("http://localhost:8080/html-chunked/stream", "mfe4","triggerStreamEvent", "", "", "", true);
 
-        HtmlMfe mfe = HtmlFlow.mfe(page -> {
+        HtmlView<?> mfe = HtmlFlow.mfe(page -> {
             page.html()
                     .head()
                     // Reference JS file in META-INF/resources/main.js

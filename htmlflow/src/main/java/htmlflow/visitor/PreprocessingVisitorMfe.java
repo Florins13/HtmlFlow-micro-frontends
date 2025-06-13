@@ -2,83 +2,84 @@ package htmlflow.visitor;
 
 import htmlflow.continuations.HtmlContinuation;
 import htmlflow.continuations.HtmlContinuationSyncStatic;
-import org.xmlet.htmlapifaster.Element;
-import org.xmlet.htmlapifaster.SuspendConsumer;
-import org.xmlet.htmlapifaster.async.AwaitConsumer;
+import org.xmlet.htmlapifaster.MfeConfiguration;
 
-
-import java.util.function.BiConsumer;
+import java.lang.reflect.Field;
 
 import static htmlflow.visitor.PreprocessingVisitor.HtmlContinuationSetter.setNext;
 
-public class PreprocessingVisitorMfe extends HtmlMfeVisitor{
-    /**
-     * The internal String builder beginning index of a static HTML block.
-     */
-    protected int staticBlockIndex = 0;
-    /**
-     * The first node to be processed.
-     */
-    protected HtmlContinuation first;
-    /**
-     * The last HtmlContinuation
-     */
-    protected HtmlContinuation last;
-
+public class PreprocessingVisitorMfe extends PreprocessingVisitor{
     public PreprocessingVisitorMfe(boolean isIndented) {
-        super(new StringBuilder(), isIndented);
+        super(isIndented);
     }
 
-    /**
-     * The main StringBuilder.
-     */
-    public final StringBuilder sb() {
-        return (StringBuilder) out;
-    }
-
-    public final HtmlContinuation getFirst() {
-        return first;
-    }
-
-    /**
-     * Here we are creating 2 HtmlContinuation objects: one for previous static HTML and a next one
-     * corresponding to the consumer passed to dynamic().
-     * We will first create the dynamic continuation that will be the next node of the static continuation.
-     *
-     * U is the type of the model passed to the dynamic HTML block that is the same as T in this visitor.
-     * Yet, since it came from HtmlApiFaster that is not typed by the Model, then we have to use
-     * another generic argument for the type of the model.
-     *
-     * @param element The parent element.
-     * @param dynamicHtmlBlock The continuation that consumes the element and a model.
-     * @param <E> Type of the parent Element.
-     * @param <U> Type of the model passed to the dynamic HTML block that is the same as T in this visitor.
-     */
-    @Override
-    public <E extends Element, U> void visitDynamic(E element, BiConsumer<E, U> dynamicHtmlBlock) {
-        throw new UnsupportedOperationException("Dynamic not allowed in HtmlMfe. Should use mfe() to manage an mfe view.");
-    }
-
-
-    @Override
-    public <M, E extends Element> void visitAwait(E element, AwaitConsumer<E, M> asyncAction) {
-        throw new UnsupportedOperationException("Await not allowed in HtmlView. Should use viewAsync() or viewSuspend() to manage an asynchronous view.");
-    }
-
-    @Override
-    public <M, E extends Element> void visitSuspending(E element, SuspendConsumer<E, M> suspendAction) {
-        throw new UnsupportedOperationException("Suspend not allowed in HtmlView. Should use viewAsync() or viewSuspend() to manage an asynchronous view.");
-    }
-
-    /**
-     * Creates the last static HTML block.
-     */
+    //reflection try
+//    @Override
+//    public void resolve(Object model) {
+//        super.resolve(model);
+//        System.out.println(this.staticBlockIndex);
+//
+//        StringBuilder scriptTags = new StringBuilder();
+//        for (MfeConfiguration mfeConfig : this.getMfePage()) {
+//            String scriptSrc = mfeConfig.getMfeScriptUrl();
+//            if (scriptSrc != null && !scriptSrc.isEmpty()) {
+//                scriptTags.append("<script type=\"module\" src=\"")
+//                        .append(scriptSrc)
+//                        .append("\"></script>");
+//            }
+//        }
+//
+//        HtmlContinuation curr = this.first;
+//        while (curr != null && curr.next != null){
+//            if(curr instanceof HtmlContinuationSyncStatic){
+//                String content = ((HtmlContinuationSyncStatic) curr).staticHtmlBlock;
+//
+//                if(content.contains("</head>")){
+//                    Field staticHtmlBlockField = null;
+//                    try {
+//                        staticHtmlBlockField = HtmlContinuationSyncStatic.class.getDeclaredField("staticHtmlBlock");
+//                        staticHtmlBlockField.setAccessible(true);
+//                        String currentHtml = ((HtmlContinuationSyncStatic) curr).staticHtmlBlock;
+//                        String newHtml = currentHtml.replaceFirst("</head>", scriptTags + "</head>");
+//                        staticHtmlBlockField.set(curr, newHtml.intern());
+//                        break;
+//                    } catch (NoSuchFieldException | IllegalAccessException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                }
+//
+//            }
+//            curr = curr.next; // Move to the next node in the linked list
+//        }
     @Override
     public void resolve(Object model) {
+        // Build script tags
+        StringBuilder scriptTags = new StringBuilder();
+        scriptTags.append("<script type=\"module\" src=\"base.js\"></script>");
+        for (MfeConfiguration mfeConfig : this.getMfePage()) {
+            String scriptSrc = mfeConfig.getMfeScriptUrl();
+            if (scriptSrc != null && !scriptSrc.isEmpty()) {
+                scriptTags.append("<script type=\"module\" src=\"")
+                        .append(scriptSrc)
+                        .append("\"></script>");
+            }
+        }
+
+        // Don't call super.resolve() which creates a final static block
+
+        // Process the static HTML directly
         String staticHtml = sb().substring(staticBlockIndex);
+
+
+        // Inject scripts if needed
+        if (staticHtml.contains("</head>")) {
+            staticHtml = staticHtml.replaceFirst("</head>", scriptTags + "</head>");
+        }
+
         HtmlContinuation staticCont = new HtmlContinuationSyncStatic(staticHtml.trim(), this, null);
         last = first == null
                 ? first = staticCont         // assign both first and last
                 : setNext(last, staticCont); // append new staticCont and return it to be the new last continuation.
     }
+
 }

@@ -112,11 +112,6 @@ public class PreprocessingVisitor extends HtmlVisitor {
     }
 
     @Override
-    public <E extends Element> void visitMfe(E e, MfeConfiguration mfeConfiguration) {
-        throw new UnsupportedOperationException("Mfe not allowed in HtmlView. Should use mfe to manage an Mfe view.");
-    }
-
-    @Override
     public <M, E extends Element> void visitAwait(E element, AwaitConsumer<E, M> asyncAction) {
         throw new UnsupportedOperationException("Await not allowed in HtmlView. Should use viewAsync() or viewSuspend() to manage an asynchronous view.");
     }
