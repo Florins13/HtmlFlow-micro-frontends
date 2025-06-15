@@ -33,7 +33,7 @@ public class CartController {
     @Transactional
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllCarts(@PathParam("id") Long id) {
+    public Response addToCart(@PathParam("id") Long id) {
         cartServiceImpl.addToCart(id);
         return Response.ok().build();
     }
