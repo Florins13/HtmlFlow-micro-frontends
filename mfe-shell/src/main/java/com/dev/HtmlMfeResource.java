@@ -29,7 +29,7 @@ public class HtmlMfeResource {
                     .__()
                         .body()
                         .div().addAttr("style", "display: flex; justify-content: center;height: 100px;border: blue 1px solid;")
-                            .h1().text("Header -> Hello from HtmlFlow!").__()
+                            .h1().dynamic((h1,model)-> h1.attrId("header-id")).text("Header -> Hello from HtmlFlow!").__()
                         .__()
                         .div().addAttr("style", "display: flex;")
                             .div().addAttr("style", "width: 75%;border: black 1px solid; margin: 20px")
