@@ -38,8 +38,8 @@ class Mfe extends HTMLElement {
     }
 
     async fetchStreamData() {
-        this.wrapper = document.createElement('div');
         if(this.mfeUrlResource){
+            this.wrapper = document.createElement('div');
             const response = await fetch(this.mfeUrlResource);
             if(response.body){
                 for await (const value of response.body as any) {//ReadableStream<Uint8Array<ArrayBufferLike>> not yet supported by ts
