@@ -17,11 +17,6 @@ public class HtmlMfeResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public Response getHtml() {
-        HtmlMfeConfig mfeBike = new HtmlMfeConfig("http://localhost:8081/bikes", "mfe1", "triggerBikeEvent", "triggerCartEvent", "http://localhost:8081/js/mfe-bikes.js", "http://localhost:8081/css/style.css");
-        HtmlMfeConfig mfeCart = new HtmlMfeConfig("http://localhost:8083/cart", "mfe2", "triggerCartEvent", "triggerOrderEvent", "http://localhost:8083/mfe-cart.js", "http://localhost:8083/style.css");
-        HtmlMfeConfig mfeOrder = new HtmlMfeConfig("http://localhost:8084/order/history", "mfe3", "triggerOrderEvent", "triggerBikeEvent", "http://localhost:8084/mfe-order.js", "");
-        HtmlMfeConfig mfeStream = new HtmlMfeConfig("http://localhost:8080/html-chunked/stream", "mfe4","triggerStreamEvent", "", "", "", true);
-
         HtmlView<?> mfe = HtmlFlow.mfe(page -> {
             page.html()
                     .head()
@@ -33,16 +28,41 @@ public class HtmlMfeResource {
                         .__()
                         .div().addAttr("style", "display: flex;")
                             .div().addAttr("style", "width: 75%;border: black 1px solid; margin: 20px")
-                                .mfe(mfeBike).__()
+                                .mfe((cfg)-> {
+                                    cfg.setMfeUrlResource("http://localhost:8081/bikes");
+                                    cfg.setMfeName("mfe1");
+                                    cfg.setMfeListeningEventName("triggerBikeEvent");
+                                    cfg.setMfeTriggersEventName("triggerCartEvent");
+                                    cfg.setMfeScriptUrl("http://localhost:8081/js/mfe-bikes.js");
+                                    cfg.setMfeStylingUrl("http://localhost:8081/css/style.css");
+                                }).__()
                             .div().addAttr("style", "width: 20%;border: red 1px solid; margin: 20px")
-                                .mfe(mfeCart).__()
+                                .mfe((cfg)-> {
+                                    cfg.setMfeUrlResource("http://localhost:8083/cart");
+                                    cfg.setMfeName("mfe2");
+                                    cfg.setMfeListeningEventName("triggerCartEvent");
+                                    cfg.setMfeTriggersEventName("triggerOrderEvent");
+                                    cfg.setMfeScriptUrl("http://localhost:8083/mfe-cart.js");
+                                    cfg.setMfeStylingUrl("http://localhost:8083/style.css");
+                                }).__()
                         .__()
                         .div()
                             .div().addAttr("style", "border: green 1px solid; margin: 20px")
-                                .mfe(mfeOrder).__()
+                                .mfe((cfg)-> {
+                                    cfg.setMfeUrlResource("http://localhost:8084/order/history");
+                                    cfg.setMfeName("mfe3");
+                                    cfg.setMfeListeningEventName("triggerOrderEvent");
+                                    cfg.setMfeScriptUrl("http://localhost:8084/mfe-order.js");
+                                    cfg.setMfeStylingUrl("");
+                                }).__()
                         .__()
                     .div().addAttr("style", "display: flex; justify-content: center;height: 50px;border: yellow 1px solid;")
-                        .div().mfe(mfeStream).__()
+                        .div().mfe((cfg)-> {
+                                    cfg.setMfeUrlResource("http://localhost:8080/html-chunked/stream");
+                                    cfg.setMfeName("mfe4");
+                                    cfg.setMfeListeningEventName("triggerStreamEvent");
+                                    cfg.setMfeStreamingData(true);
+                        }).__()
                     .__()
                     .__();
         });

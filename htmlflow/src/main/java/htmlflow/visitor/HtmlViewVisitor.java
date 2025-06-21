@@ -31,6 +31,7 @@ import org.xmlet.htmlapifaster.SuspendConsumer;
 import org.xmlet.htmlapifaster.async.AwaitConsumer;
 
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 
 /**
@@ -84,7 +85,7 @@ public class HtmlViewVisitor extends HtmlVisitor {
     }
 
     @Override
-    public <E extends Element> void visitMfe(E e, MfeConfiguration mfeConfiguration) {
+    public <E extends Element> void visitMfe(E e, Consumer<MfeConfiguration> mfeConfiguration) {
         throw new IllegalStateException("Wrong use of mfe in a HtmlView! Use HtmlMfe class instead.");
     }
 
