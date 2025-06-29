@@ -18,6 +18,8 @@ public class PreprocessingVisitorMfe extends PreprocessingVisitor{
 
         StringBuilder scriptTags = new StringBuilder();
         scriptTags.append("<script type=\"module\" src=\"base.js\"></script>");
+        scriptTags.append("<script type=\"module\" src=\"http://localhost:8083/index-cart.js\"></script>");
+        scriptTags.append("<link rel=\"stylesheet\" src=\"http://localhost:8083/index-css.css\"></link>");
         for (MfeConfiguration mfeConfig : this.getMfePage()) {
             String scriptSrc = mfeConfig.getMfeScriptUrl();
             if (scriptSrc != null && !scriptSrc.isEmpty()) {

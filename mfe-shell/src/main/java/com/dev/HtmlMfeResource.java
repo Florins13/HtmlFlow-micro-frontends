@@ -45,6 +45,7 @@ public class HtmlMfeResource {
                                     cfg.setMfeScriptUrl("http://localhost:8083/mfe-cart.js");
                                     cfg.setMfeStylingUrl("http://localhost:8083/style.css");
                                 }).__()
+                    .div().addAttr("id", "root").__()
                         .__()
                         .div()
                             .div().addAttr("style", "border: green 1px solid; margin: 20px")
