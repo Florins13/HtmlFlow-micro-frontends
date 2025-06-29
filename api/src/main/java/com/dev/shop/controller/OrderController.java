@@ -26,7 +26,7 @@ public class OrderController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response order() throws Exception {
+    public Response placeOrder() throws Exception {
         if (orderServiceImpl.getUserCart().cartIsEmpty())
             throw new Exception("Your cart is empty, please add items and try again!");
         OrderDTO newOrder = new OrderDTO(orderServiceImpl.placeOrder("test name", "test address", 123, "22-44", "BUY"));

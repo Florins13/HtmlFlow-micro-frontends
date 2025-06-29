@@ -4,14 +4,16 @@ package htmlflow;
 import org.xmlet.htmlapifaster.MfeConfiguration;
 
 public class HtmlMfeConfig implements MfeConfiguration {
-    private final String mfeUrlResource;
-    private final String mfeName;
-    private final String mfeListeningEventName;
-    private final String mfeTriggersEventName;
+    private String mfeUrlResource;
+    private String mfeName;
+    private String mfeListeningEventName;
+    private String mfeTriggersEventName;
     private String mfeElementName = "micro-frontend";
     private String mfeScriptUrl = null;
     private String mfeStylingUrl = null;
-    private final boolean isMfeStreamingData;
+    private boolean isMfeStreamingData;
+
+    public HtmlMfeConfig(){}
 
     public HtmlMfeConfig(String mfeUrlResource, String mfeName, String mfeListeningEventName, String mfeTriggersEventName, boolean isMfeStreamingData) {
         this.mfeUrlResource = mfeUrlResource;
@@ -74,5 +76,45 @@ public class HtmlMfeConfig implements MfeConfiguration {
     @Override
     public boolean isMfeStreamingData() {
         return this.isMfeStreamingData;
+    }
+
+    @Override
+    public boolean setMfeStreamingData(boolean mfeStreamingData) {
+        return this.isMfeStreamingData = mfeStreamingData;
+    }
+
+    @Override
+    public String setMfeUrlResource(String mfeUrlResource) {
+        return this.mfeUrlResource = mfeUrlResource;
+    }
+
+    @Override
+    public String setMfeName(String mfeName) {
+        return this.mfeName = mfeName;
+    }
+
+    @Override
+    public String setMfeListeningEventName(String mfeListeningEventName) {
+        return this.mfeListeningEventName = mfeListeningEventName;
+    }
+
+    @Override
+    public String setMfeTriggersEventName(String mfeTriggersEventName) {
+        return this.mfeTriggersEventName = mfeTriggersEventName;
+    }
+
+    @Override
+    public String setMfeElementName(String mfeElementName) {
+        return this.mfeElementName = mfeElementName;
+    }
+
+    @Override
+    public String setMfeScriptUrl(String mfeScriptUrl) {
+        return this.mfeScriptUrl = mfeScriptUrl;
+    }
+
+    @Override
+    public String setMfeStylingUrl(String mfeStylingUrl) {
+        return this.mfeStylingUrl = mfeStylingUrl;
     }
 }
