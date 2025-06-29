@@ -4,16 +4,11 @@ console.log("Loading script of mfe2!")
 const mfeTriggerOrderEvent = "triggerOrderEvent";
 const mfeTriggerCartEvent = 'triggerCartEvent';
 const mfeListenAddEvent = 'triggerAddEvent';
-const mfeShellEventName = 'htmx:afterSwap';
-
-
-const mfeElement = document.querySelector('[mfe-name="mfe2"]');
-mfeElement.addEventListener(mfeShellEventName, (event) => {
-    buildButtons();
-})
+const mfeShellEventName = 'mfe2-fragment-ready';
+let mfeElement = {};
 
 window.addEventListener(mfeShellEventName, (e) => {
-
+    buildButtons();
 });
 
 window.addEventListener(mfeListenAddEvent, (e) => {
@@ -24,11 +19,11 @@ window.addEventListener(mfeListenAddEvent, (e) => {
 
 
 function buildButtons() {
-    // mfeElement = document.querySelector('[mfe-name="mfe2"]');
-    const checkoutButton = mfeElement.querySelector('#triggerOrder');
-    const increaseQuantity = mfeElement.querySelectorAll('#increaseQuantity');
-    const decreaseQuantity = mfeElement.querySelectorAll('#decreaseQuantity');
-    const deleteCartItem = mfeElement.querySelectorAll('#deleteCartItem');
+    mfeElement = document.querySelector('[mfe-name="mfe2"]');
+    const checkoutButton = mfeElement.shadowRoot.querySelector('#triggerOrder');
+    const increaseQuantity = mfeElement.shadowRoot.querySelectorAll('#increaseQuantity');
+    const decreaseQuantity = mfeElement.shadowRoot.querySelectorAll('#decreaseQuantity');
+    const deleteCartItem = mfeElement.shadowRoot.querySelectorAll('#deleteCartItem');
     if (checkoutButton) {
         checkoutButton.addEventListener('click', () => finalizeOrder().then(() => mfeElement.triggerEvent(mfeTriggerOrderEvent, 'post success', { type: 'reload'})));
     }

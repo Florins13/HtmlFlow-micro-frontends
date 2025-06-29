@@ -29,8 +29,7 @@ public class StreamResource {
     public static void viewTopScores(Writer writer) throws IOException {
 //        writer.write("<h1>");
         model.blockingForEach(item -> {
-            writer.write("event: message\n"); // Name of event
-            writer.write("data: " + item + "\n\n");
+            writer.write("<span>" + item + "</span>");
             writer.flush();
         });
 //        writer.write("</h1>");
@@ -53,16 +52,12 @@ public class StreamResource {
 
     @Path("/stream")
     @GET
-    @Produces(MediaType.SERVER_SENT_EVENTS)  // Can be JSON, plain text, etc.
+    @Produces(MediaType.TEXT_HTML)  // Can be JSON, plain text, etc.
     public Response streamResponse() {
         StreamingOutput stream = (OutputStream output) -> {
             viewTopScores(new OutputStreamWriter(output));
         };
-        return Response.ok(stream)
-                .header("Content-Type", "text/event-stream")
-                .header("Access-Control-Allow-Origin", "http://localhost:8082")
-                .header("Access-Control-Allow-Credentials", "true")
-                .build();
+        return Response.ok(stream).build();
     }
 
 

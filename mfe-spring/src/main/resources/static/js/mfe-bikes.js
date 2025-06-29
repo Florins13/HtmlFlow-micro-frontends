@@ -1,13 +1,12 @@
 console.log("Loading script of mfe1!")
 
 const mfeTriggerAddEvent = 'triggerAddEvent';
-const mfeShellEventName = 'htmx:afterSwap';
+const mfeShellEventName = 'mfe1-fragment-ready';
 
-const mfeElement = document.querySelector('[mfe-name="mfe1"]');
-mfeElement.addEventListener(mfeShellEventName, (event) => {
-    console.log('Micro-frontend content loaded and swapped!');
-    // You can run post-load logic here
-    const btn = mfeElement.querySelectorAll('button')
+
+window.addEventListener(mfeShellEventName, () => {
+    const mfeElement = document.querySelector('[mfe-name="mfe1"]');
+    const btn = mfeElement.shadowRoot.querySelectorAll('button')
     btn?.forEach(button => {
         button.addEventListener('click', () => {
             console.log('trigger cart event triggered on click')
