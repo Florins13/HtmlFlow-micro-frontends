@@ -26,10 +26,12 @@ package htmlflow.visitor;
 
 import htmlflow.continuations.HtmlContinuation;
 import org.xmlet.htmlapifaster.Element;
+import org.xmlet.htmlapifaster.MfeConfiguration;
 import org.xmlet.htmlapifaster.SuspendConsumer;
 import org.xmlet.htmlapifaster.async.AwaitConsumer;
 
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 
 /**
@@ -80,6 +82,11 @@ public class HtmlViewVisitor extends HtmlVisitor {
          * Otherwise, maybe we are invoking a dynamic nested in other dynamic, which is not allowed!
          */
         throw new IllegalStateException("You are already in a dynamic block! Do not use dynamic() chained inside another dynamic!");
+    }
+
+    @Override
+    public <E extends Element> void visitMfe(E e, Consumer<MfeConfiguration> mfeConfiguration) {
+        throw new IllegalStateException("Wrong use of mfe in a HtmlView! Use HtmlMfe class instead.");
     }
 
     @Override

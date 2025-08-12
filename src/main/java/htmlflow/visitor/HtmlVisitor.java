@@ -25,25 +25,15 @@
 package htmlflow.visitor;
 
 import com.google.common.html.HtmlEscapers;
+import htmlflow.HtmlMfeConfig;
 import htmlflow.exceptions.HtmlFlowAppendException;
-import org.xmlet.htmlapifaster.Area;
-import org.xmlet.htmlapifaster.Base;
-import org.xmlet.htmlapifaster.Br;
-import org.xmlet.htmlapifaster.Col;
-import org.xmlet.htmlapifaster.Element;
-import org.xmlet.htmlapifaster.ElementVisitor;
-import org.xmlet.htmlapifaster.Embed;
-import org.xmlet.htmlapifaster.Hr;
-import org.xmlet.htmlapifaster.Img;
-import org.xmlet.htmlapifaster.Input;
-import org.xmlet.htmlapifaster.Link;
-import org.xmlet.htmlapifaster.Meta;
-import org.xmlet.htmlapifaster.Param;
-import org.xmlet.htmlapifaster.Root;
-import org.xmlet.htmlapifaster.Source;
-import org.xmlet.htmlapifaster.Text;
+import org.xmlet.htmlapifaster.*;
 
 import java.io.IOException;
+import java.lang.Object;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 import static htmlflow.visitor.Tags.*;
 
@@ -68,6 +58,18 @@ public abstract class HtmlVisitor extends ElementVisitor {
      * It the HTML output should be indented or not.
      */
     public final boolean isIndented;
+
+
+    private final List<HtmlMfeConfig> mfePage = new ArrayList<>();
+
+    public void addMfePage(HtmlMfeConfig mfePage) {
+        this.mfePage.add(mfePage);
+    }
+
+    public List<HtmlMfeConfig> getMfePage() {
+        return mfePage;
+    }
+
     /**
      * keep track of current indentation.
      */
@@ -198,6 +200,7 @@ public abstract class HtmlVisitor extends ElementVisitor {
         newlineAndIndent();
         write(HtmlEscapers.htmlEscaper().escape(text.getValue()));
     }
+
     /**
      * To distinguish from text() that escapes HTML by default.
      * This raw() acts like text() but keeping text as it is.
@@ -213,6 +216,27 @@ public abstract class HtmlVisitor extends ElementVisitor {
         newlineAndIndent();
         addComment(out, text.getValue());
     }
+
+
+
+    @Override
+    public <E extends Element> void visitMfe(E e, Consumer<MfeConfiguration> mfeConsumerCfg) {
+        // collect the mfe configuration
+        HtmlMfeConfig mfeConfig = new HtmlMfeConfig();
+        mfeConsumerCfg.accept(mfeConfig);
+        addMfePage(mfeConfig);
+
+        e.custom(mfeConfig.getMfeElementName()).addAttr("mfe-url", mfeConfig.getMfeUrlResource());
+        e.getVisitor().visitAttribute("mfe-name", mfeConfig.getMfeName());
+        e.getVisitor().visitAttribute("mfe-styling-url", mfeConfig.getMfeStylingUrl());
+        e.getVisitor().visitAttribute("mfe-listen-event", mfeConfig.getMfeListeningEventName());
+        e.getVisitor().visitAttribute("mfe-trigger-event", mfeConfig.getMfeTriggerEventName());
+        if(mfeConfig.isMfeStreamingData()){
+            e.getVisitor().visitAttribute("mfe-stream-data", String.valueOf(mfeConfig.isMfeStreamingData()));
+        }
+
+    }
+
 
     /*=========================================================================*/
     /*------------            Abstract HOOK Methods         -------------------*/
@@ -302,4 +326,7 @@ public abstract class HtmlVisitor extends ElementVisitor {
     public final <Z extends Element>  void visitParentBase(Base<Z> element) {
         visitParentOnVoidElements ();
     }
+
+
+
 }

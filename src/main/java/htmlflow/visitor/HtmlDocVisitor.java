@@ -25,10 +25,12 @@
 package htmlflow.visitor;
 
 import org.xmlet.htmlapifaster.Element;
+import org.xmlet.htmlapifaster.MfeConfiguration;
 import org.xmlet.htmlapifaster.SuspendConsumer;
 import org.xmlet.htmlapifaster.async.AwaitConsumer;
 
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * This is the implementation of the ElementVisitor (from HtmlApiFaster
@@ -55,6 +57,11 @@ public class HtmlDocVisitor extends HtmlVisitor {
     }
 
     @Override
+    public <E extends Element> void visitMfe(E e, Consumer<MfeConfiguration> mfeConfiguration) {
+        throw new IllegalStateException("Wrong use of mfe() in a static view! Use HtmlMfe class to create micro frontends.");
+    }
+
+    @Override
     public final <M, E extends Element> void visitAwait(E element, AwaitConsumer<E,M> asyncAction) {
         throw new IllegalStateException("Wrong use of async() in a static view! Use HtmlViewAsync to produce an async view.");
     }
@@ -74,5 +81,6 @@ public class HtmlDocVisitor extends HtmlVisitor {
     public final HtmlDocVisitor clone(boolean isIndented) {
         return new HtmlDocVisitor(this.out, isIndented);
     }
+
 
 }

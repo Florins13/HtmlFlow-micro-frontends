@@ -24,11 +24,9 @@
  */
 package htmlflow;
 
-import htmlflow.visitor.HtmlDocVisitor;
-import htmlflow.visitor.HtmlViewVisitor;
-import htmlflow.visitor.HtmlViewVisitorAsync;
-import htmlflow.visitor.PreprocessingVisitor;
-import htmlflow.visitor.PreprocessingVisitorAsync;
+import htmlflow.visitor.*;
+
+import java.util.List;
 
 /**
  * Factory to create HtmlDoc or HtmlView instances corresponding to static HTMl pages or dynamic pages.
@@ -57,6 +55,16 @@ public class HtmlFlow {
          */
         preView.getVisitor().resolve(null);
         return pre;
+    }
+
+    private static PreprocessingVisitorMfe preprocessingMfe(HtmlTemplate template, boolean isIndented) {
+        PreprocessingVisitorMfe processView = new PreprocessingVisitorMfe(isIndented);
+        HtmlView<?> preView = new HtmlView<>(() -> processView, template, false);
+        // first process
+        template.resolve(preView);
+        // second process
+        preView.getVisitor().resolve(null);
+        return processView;
     }
 
     /**
@@ -156,4 +164,14 @@ public class HtmlFlow {
         PreprocessingVisitorAsync pre = preprocessingAsync(template, isIndented);
         return new HtmlViewAsync<>(new HtmlViewVisitorAsync(isIndented, pre.getFirst()), template, threadSafe);
     }
+
+    public static <M>HtmlView<M> mfe(HtmlTemplate template) {
+        PreprocessingVisitorMfe pre = preprocessingMfe(template, false);
+        return new HtmlView<>(
+                (() -> new HtmlViewVisitor(new StringBuilder(), true, pre.getFirst())),
+                template,
+                false);
+    }
+
+
 }

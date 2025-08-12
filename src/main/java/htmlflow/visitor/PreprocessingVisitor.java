@@ -25,10 +25,7 @@
 
 package htmlflow.visitor;
 
-import htmlflow.continuations.HtmlContinuation;
-import htmlflow.continuations.HtmlContinuationSyncCloseAndIndent;
-import htmlflow.continuations.HtmlContinuationSyncDynamic;
-import htmlflow.continuations.HtmlContinuationSyncStatic;
+import htmlflow.continuations.*;
 import org.xmlet.htmlapifaster.Element;
 import org.xmlet.htmlapifaster.SuspendConsumer;
 import org.xmlet.htmlapifaster.async.AwaitConsumer;
