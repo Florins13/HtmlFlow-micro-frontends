@@ -22,7 +22,7 @@
         <module>htmlflow-view-loader</module>
         <module>flowifier</module>
         <module>api</module>
-        <module>mfe-central</module>
+        <module>mfe-shell</module>
         <module>mfe-htmlflow</module>
         <module>mfe-qute</module>
         <module>mfe-spring</module>
