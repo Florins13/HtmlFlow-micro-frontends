@@ -3,7 +3,6 @@ package com.dev;
 
 
 import htmlflow.HtmlFlow;
-import htmlflow.HtmlMfeConfig;
 import htmlflow.HtmlView;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -17,7 +16,7 @@ public class HtmlMfeResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public Response getHtml() {
-        HtmlView<?> mfe = HtmlFlow.mfe(page -> {
+        HtmlView<?> mfe = HtmlFlow.ViewFactory.builder().mfeEnabled(true).build().view(( page -> {
             page.html()
                     .head()
                     // Reference JS file in META-INF/resources/main.js
@@ -65,7 +64,7 @@ public class HtmlMfeResource {
                         }).__()
                     .__()
                     .__();
-        });
+        }));
 
         String html = mfe.render();
         return Response.ok(html).build();
