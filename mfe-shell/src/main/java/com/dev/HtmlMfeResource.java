@@ -35,7 +35,7 @@ public class HtmlMfeResource {
 //                                .script().attrType(EnumTypeScriptType.MODULE).attrSrc("http://localhost:8081/js/some-page.js").__()
                             .__()
                             .div().addAttr("style", "height:800px; width: 20%;border: red 1px solid; margin: 20px")
-                                .custom("turbo-frame").addAttr("id", "test_cart_frame").addAttr("src", "http://localhost:8083/cart").__()
+                                .custom("turbo-frame").addAttr("id", "test_cart_frame").addAttr("src", "http://localhost:8083/cart").addAttr("refresh", "morph").__()
                             .__()
                         .__()
                         .div()

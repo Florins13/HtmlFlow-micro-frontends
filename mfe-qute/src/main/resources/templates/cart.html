@@ -19,7 +19,7 @@
                         </form>
                         <p>{cartItem.getQuantity()}</p>
                         <form action="/cart/updateQuantity/increase" method="post">
-                            <button name="id" type="submit" value="{cartItem.getId()}" style="width: 85px">Increase +</button>
+                            <button name="id" type="submit" value="{cartItem.getId()}" style="width: 85px" data-turbo-frame="test_cart_frame">Increase +</button>
                         </form>
                     </div>
 
@@ -29,7 +29,7 @@
     </div>
     <div style="display: flex;flex-direction: row;justify-content: end;gap: 20px;padding-right: 50px;">
         <h3>Total: {cart.cartTotal} €</h3>
-        <form action="/order/finalise" method="post" id="cart_frame" data-turbo-frame="test_transaction_frame">
+        <form action="/order/finalise" method="post" id="cart_frame" data-turbo-frame="_top">
             <button type="submit" {#if cart.cartIsEmpty()} disabled {/if} style="height: 30px;align-self: center;">Checkout</button>
         </form>
     </div>

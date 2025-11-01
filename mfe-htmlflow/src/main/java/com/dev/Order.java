@@ -7,6 +7,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
+import java.net.URI;
 import java.util.List;
 
 @Path("/order")
@@ -26,8 +27,10 @@ public class Order {
     }
 
     @POST
+    @Produces(MediaType.TEXT_HTML)
     @Path("/finalise")
-    public void addItem() {
+    public Response addItem() {
         orderClient.finaliseTransaction();
+        return Response.seeOther(URI.create("/order/history")).build();
     }
 }
