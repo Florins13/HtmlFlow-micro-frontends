@@ -2,6 +2,7 @@ package com.dev.shop.controller;
 
 
 import com.dev.shop.controller.dto.OrderDTO;
+import com.dev.shop.controller.dto.OrderRequestDTO;
 import com.dev.shop.model.Order;
 import com.dev.shop.service.OrderService;
 import jakarta.annotation.security.RolesAllowed;
@@ -26,10 +27,15 @@ public class OrderController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response placeOrder() throws Exception {
+    public Response placeOrder(OrderRequestDTO orderRequestDTO) throws Exception {
         if (orderServiceImpl.getUserCart().cartIsEmpty())
             throw new Exception("Your cart is empty, please add items and try again!");
-        OrderDTO newOrder = new OrderDTO(orderServiceImpl.placeOrder("test name", "test address", 123, "22-44", "BUY"));
+        OrderDTO newOrder = new OrderDTO(orderServiceImpl.placeOrder(
+                orderRequestDTO.getFullName(),
+                orderRequestDTO.getAddress(),
+                orderRequestDTO.getTelephone(),
+                orderRequestDTO.getZipCode(),
+                orderRequestDTO.getAcquireType()));
         return Response.ok(newOrder).build();
     }
 

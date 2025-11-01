@@ -51,6 +51,4 @@ public class Startup {
         cartItemList.add(cartItem);
         user.getCart().setCartItems(cartItemList);
     }
-
-
 }
