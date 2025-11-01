@@ -19,16 +19,12 @@ public class HtmlMfeResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public Response getHtml() {
-        HtmlMfeConfig mfeBike = new HtmlMfeConfig("http://localhost:8081/bikes", "mfe1", "triggerBikeEvent", "triggerCartEvent", "http://localhost:8081/js/mfe-bikes.js", "http://localhost:8081/css/style.css");
-        HtmlMfeConfig mfeCart = new HtmlMfeConfig("http://localhost:8083/cart", "mfe2", "triggerCartEvent", "triggerOrderEvent", "http://localhost:8083/mfe-cart.js", "http://localhost:8083/style.css");
-        HtmlMfeConfig mfeOrder = new HtmlMfeConfig("http://localhost:8084/order/history", "mfe3", "triggerOrderEvent", "triggerBikeEvent", "http://localhost:8084/mfe-order.js", "");
-        HtmlMfeConfig mfeStream = new HtmlMfeConfig("http://localhost:8080/html-chunked/stream", "mfe4","triggerStreamEvent", "", "", "", true);
-
-        HtmlView<?> mfe = HtmlFlow.mfe(page -> {
+        HtmlView<?> mfe = HtmlFlow.ViewFactory.builder().mfeEnabled(true).build().view(( page -> {
             page.html()
                     .head()
                     .script().attrSrc("https://unpkg.com/htmx.org@1.9.10").__()
                     .script().attrSrc("https://unpkg.com/htmx.org/dist/ext/sse.js").addAttr("crossorigin", "anonymous").__()
+                    // Reference JS file in META-INF/resources/main.js
                     .__()
                         .body()
                         .div().addAttr("style", "display: flex; justify-content: center;height: 100px;border: blue 1px solid;")
@@ -58,7 +54,7 @@ public class HtmlMfeResource {
 //                            .custom("micro-frontend").addAttr("hx-ext","sse").addAttr("sse-connect", "http://localhost:8080/html-chunked/stream").addAttr("sse-event", "message").addAttr("hx-swap", "beforeend").__()
                     .__()
                     .__();
-        });
+        }));
 
         String html = mfe.render();
         return Response.ok(html).build();
