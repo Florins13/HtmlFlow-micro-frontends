@@ -1,5 +1,5 @@
 # Use an official OpenJDK runtime as the base image
-FROM openjdk:17-alpine
+FROM --platform=linux/amd64 openjdk:17-alpine
 
 # Set the working directory inside the container
 WORKDIR /app
