@@ -1,5 +1,5 @@
 # Use an official OpenJDK runtime as the base image
-FROM openjdk:17-alpine
+FROM --platform=linux/amd64 openjdk:17-alpine
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -14,8 +14,8 @@ COPY pom.xml .
 COPY src ./src
 
 COPY --chmod=755 mvnw .
-#RUN ./mvnw clean package -DskipTests -Dgpg.skip -X
-COPY target ./target
+RUN ./mvnw clean package -DskipTests -Dgpg.skip -X
+#COPY target ./target
 #for now lets copy the target and run it
 
 # Expose the port Quarkus listens on (usually 8080)
