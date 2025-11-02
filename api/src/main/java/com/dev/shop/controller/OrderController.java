@@ -30,12 +30,13 @@ public class OrderController {
     public Response placeOrder(OrderRequestDTO orderRequestDTO) throws Exception {
         if (orderServiceImpl.getUserCart().cartIsEmpty())
             throw new Exception("Your cart is empty, please add items and try again!");
-        OrderDTO newOrder = new OrderDTO(orderServiceImpl.placeOrder(
-                orderRequestDTO.getFullName(),
-                orderRequestDTO.getAddress(),
-                orderRequestDTO.getTelephone(),
-                orderRequestDTO.getZipCode(),
-                orderRequestDTO.getAcquireType()));
+        OrderDTO newOrder = new OrderDTO(orderServiceImpl.placeOrder("test name", "test address", 123, "22-44", "BUY"));
+//        OrderDTO newOrder = new OrderDTO(orderServiceImpl.placeOrder(
+//                orderRequestDTO.getFullName(),
+//                orderRequestDTO.getAddress(),
+//                orderRequestDTO.getTelephone(),
+//                orderRequestDTO.getZipCode(),
+//                orderRequestDTO.getAcquireType()));
         return Response.ok(newOrder).build();
     }
 

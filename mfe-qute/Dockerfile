@@ -15,7 +15,6 @@ COPY src ./src
 
 COPY --chmod=755 mvnw .
 RUN ./mvnw clean package -DskipTests
-#for now lets copy the target and run it
 
 # Expose the port Quarkus listens on (usually 8080)
 EXPOSE 8082

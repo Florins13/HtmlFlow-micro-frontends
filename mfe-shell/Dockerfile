@@ -12,11 +12,9 @@ COPY mvnw .
 # Copy the pom and source
 COPY pom.xml .
 COPY src ./src
-COPY --chmod=755 mvnw .
 
-#RUN ./mvnw clean package -DskipTests -Dgpg.skip -X
-#for now lets copy the target and run it
-COPY target ./target
+COPY --chmod=755 mvnw .
+RUN ./mvnw clean package -DskipTests -Dgpg.skip -X
 
 # Expose the port Quarkus listens on (usually 8080)
 EXPOSE 8082
