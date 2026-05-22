@@ -1,23 +1,12 @@
-# Use an official OpenJDK runtime as the base image
-FROM openjdk:17-jdk-slim
-
-# Set the working directory inside the container
+FROM maven:3.9-eclipse-temurin-17 AS build
 WORKDIR /app
-
-ENV LANGUAGE='en_US:en'
-COPY .mvn .mvn
-COPY mvnw .
-
-
-# Copy the pom and source
 COPY pom.xml .
+RUN --mount=type=cache,target=/root/.m2 mvn dependency:go-offline -B
 COPY src ./src
+RUN --mount=type=cache,target=/root/.m2 mvn clean package -DskipTests -Dquarkus.package.jar.type=fast-jar
 
-COPY --chmod=755 mvnw .
-RUN ./mvnw clean package -DskipTests -Dgpg.skip -X
-
-# Expose the port Quarkus listens on (usually 8080)
+FROM eclipse-temurin:17-jre
+WORKDIR /app
+COPY --from=build /app/target/quarkus-app/ ./
 EXPOSE 8084
-
-# Run the Quarkus application
-ENTRYPOINT ["java", "-jar", "target/quarkus-app/quarkus-run.jar"]
+CMD ["java", "-jar", "quarkus-run.jar"]

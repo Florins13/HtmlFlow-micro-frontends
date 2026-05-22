@@ -15,24 +15,57 @@ import java.io.PipedReader;
 import java.io.PipedWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.math.BigDecimal;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 @Path("/html-chunked")
 public class StreamResource {
 
-    private static long timeout = 1000;
-    static final Observable<String> model = Observable
-            .fromArray("Streaming ", "my ", "footer ", "!")
-            .concatMap(item -> Observable.just(item).delay(timeout, TimeUnit.MILLISECONDS));
+    private static final long ROW_DELAY_MS = 1000;
 
-    public static void viewTopScores(Writer writer) throws IOException {
-//        writer.write("<h1>");
-        model.blockingForEach(item -> {
-            writer.write("<span>" + item + "</span>");
+    // Simulated order history data: transaction, status, item, quantity, total
+    private static final String[][] ORDER_ROWS = {
+            {"a3f1-b8c2", "COMPLETED",  "Mountain Pro X1",  "1", "1299.99"},
+            {"d7e4-f5a9", "SHIPPING",   "Urban Cruiser S3", "2", "1598.00"},
+            {"c2b8-e1d6", "PROCESSING", "Road Racer R7",    "1", "2450.00"},
+            {"f9a3-d4c7", "COMPLETED",  "Trail Blazer T5",  "3", "2697.00"},
+            {"b5e1-a8f2", "WAITING_PAYMENT", "City Commuter C2", "1", "899.99"}
+    };
+
+    static final Observable<String[]> orderRowStream = Observable
+            .fromArray(ORDER_ROWS)
+            .concatMap(row -> Observable.just(row).delay(ROW_DELAY_MS, TimeUnit.MILLISECONDS));
+
+    public static void streamOrderHistory(Writer writer) throws IOException {
+        // First chunk: table with header
+        writer.write("<table data-stream=\"host\">"
+                + "<thead><tr>"
+                + "<th>Transaction</th>"
+                + "<th>Status</th>"
+                + "<th>Item</th>"
+                + "<th>Qty</th>"
+                + "<th>Total (€)</th>"
+                + "</tr></thead>"
+                + "<tbody data-stream=\"order\">");
+        writer.write("</tbody></table>");
+        writer.flush();
+
+        // Each row arrives as a separate chunk with a delay
+        orderRowStream.blockingForEach(row -> {
+            writer.write("<tr data-stream=\"order\""
+                    + "<td>" + row[0] + "</td>"
+                    + "<td>" + row[1] + "</td>"
+                    + "<td>" + row[2] + "</td>"
+                    + "<td>" + row[3] + "</td>"
+                    + "<td>" + row[4] + "</td>"
+                    + "</tr>");
             writer.flush();
         });
-//        writer.write("</h1>");
+
+        // Final chunk: close the table
+
+        writer.flush();
         writer.close();
     }
 
@@ -42,28 +75,26 @@ public class StreamResource {
     public Reader getHtml() throws IOException {
         return buildReaderFromWriterBlock(writer -> {
             try {
-                viewTopScores(writer);
+                streamOrderHistory(writer);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         });
-
     }
 
     @Path("/stream")
     @GET
-    @Produces(MediaType.TEXT_HTML)  // Can be JSON, plain text, etc.
+    @Produces(MediaType.TEXT_HTML)
     public Response streamResponse() {
         StreamingOutput stream = (OutputStream output) -> {
-            viewTopScores(new OutputStreamWriter(output));
+            streamOrderHistory(new OutputStreamWriter(output));
         };
         return Response.ok(stream).build();
     }
 
-
     private static Reader buildReaderFromWriterBlock(Consumer<Writer> block) throws IOException {
         PipedWriter writer = new PipedWriter();
-        PipedReader reader = new PipedReader(writer); // Connect the reader to the writer
+        PipedReader reader = new PipedReader(writer);
         Thread writerThread = new Thread(() -> {
             block.accept(writer);
         });

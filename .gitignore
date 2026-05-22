@@ -15,3 +15,4 @@ mfe-react/node_modules
 mfe-react/dist
 mfe-react/.vite
 ts-engine/node_modules
+ts-engine/package-lock.json
