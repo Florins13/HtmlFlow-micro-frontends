@@ -140,6 +140,9 @@ class Mfe extends HTMLElement {
 
     private async fetchStreamData() {
         const decoder = new TextDecoder();
+        if(this.shadowRoot){
+            this.shadowRoot.innerHTML = "";
+        }
         if(this.mfeUrlResource){
             const response = await fetch(this.mfeUrlResource);
             if (!response.ok) {
