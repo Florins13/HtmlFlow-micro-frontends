@@ -3,6 +3,7 @@ interface MfeContext {
     triggerMfeEvent: (message: string, payload: unknown, eventName: string, ) => void;
     listenMfeEvent: (listener: EventListener, eventName: string) => void;
     reloadMfe: () => void;
+    mfeEvents: typeof MfcEventType
 }
 
 declare global {
@@ -11,20 +12,43 @@ declare global {
     }
 }
 
+enum MfcEventType {
+    RELOAD = "RELOAD"
+}
+
 class Mfe extends HTMLElement {
+    public mfeReady: boolean = false;
     private mfeName: string | null = "";
     private mfeUrlResource: string | null = "";
     private mfeListeningEventName: string | null = "";
     private mfeTriggerEventName: string | null = "";
-    private readyEventSuffix: string = "-fragment-ready";
+    private readonly readyEventSuffix: string = "-fragment-ready";
     private mfeStylingUrl: string | null = "";
     private isMfeStreamingData: string | null = "";
     private abortController: AbortController | null = null;
     private bindReload = this.reloadFragment.bind(this); // prevent new reference
-    public mfeReady: boolean = false;
     private static registry = new Map<string, Mfe>();
     private static pendingCallBacks = new Map<string, ((mfeRoot: MfeContext)=>void)[]>();
-
+    private static readonly ALLOWED_ELEMENTS: string[] = [
+        // Structural / sectioning
+        'div', 'span', 'main', 'section', 'article', 'aside', 'nav', 'header', 'footer',
+        // Headings
+        'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+        // Text content
+        'p', 'br', 'hr', 'blockquote', 'pre', 'code', 'em', 'strong', 'small', 'b', 'i', 'u', 'mark', 'sub', 'sup', 'abbr', 'cite', 'q', 'time',
+        // Lists
+        'ul', 'ol', 'li', 'dl', 'dt', 'dd',
+        // Tables
+        'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td', 'caption', 'colgroup', 'col',
+        // Forms & interactive
+        'form', 'input', 'button', 'select', 'option', 'optgroup', 'textarea', 'label', 'fieldset', 'legend', 'output', 'datalist',
+        // Media & embedded
+        'img', 'picture', 'source', 'figure', 'figcaption', 'video', 'audio',
+        // Links & resources
+        'a', 'link',
+        // Misc
+        'details', 'summary', 'template', 'slot', 'data', 'meter', 'progress',
+    ];
 
     private windowListeners: { eventName: string; handler: EventListener }[] = [];
 
@@ -48,6 +72,7 @@ class Mfe extends HTMLElement {
         this.mfeTriggerEventName = this.getAttribute("mfe-trigger-event");
         this.isMfeStreamingData = this.getAttribute("mfe-stream-data");
         if (this.mfeListeningEventName) {
+            console.log(this.mfeListeningEventName);
             window.addEventListener(this.mfeListeningEventName, this.bindReload);
         }
 
@@ -101,7 +126,8 @@ class Mfe extends HTMLElement {
                 // track it so we can remove it on next reload
                 this.windowListeners.push({eventName: name, handler: listener});
             },
-            reloadMfe: () => this.reloadFragment(new CustomEvent("reload", { detail: { payload: {type:"reload" }} }))
+            reloadMfe: () => this.reloadFragment(new CustomEvent("reload", { detail: { payload: {type: MfcEventType.RELOAD }} })),
+            mfeEvents: MfcEventType
         }
     }
 
@@ -130,14 +156,6 @@ class Mfe extends HTMLElement {
         }
     }
 
-    private toFragment(html:string) {
-        const template = document.createElement('template');
-
-        template.innerHTML = html;
-
-        return template.content;
-    }
-
     private async fetchStreamData() {
         const decoder = new TextDecoder();
         if(this.shadowRoot){
@@ -151,19 +169,19 @@ class Mfe extends HTMLElement {
             if(response.body){
                 for await (const value of response.body as any) {
                 const chunk = decoder.decode(new Uint8Array(value), {stream: true});
-                const doc = this.toFragment(chunk);
+                const node = this.createSafeHtml(chunk);
 
                 const hostSelector = `[data-stream="host"]`;
 
-                const host = doc.querySelector(hostSelector);
+                const host = node.querySelector(hostSelector);
                 if(host) {
-                    this.shadowRoot?.appendChild(doc);
+                    this.shadowRoot?.append(node.content);
                 }else{
-                    const streamnode = doc.querySelector('[data-stream]');
+                    const streamnode = node.querySelector('[data-stream]');
                     if(streamnode){
                         this.shadowRoot?.querySelector(`[data-stream="${streamnode.getAttribute('data-stream')}"]`)?.append(streamnode);
                     }else{
-                        this.shadowRoot?.appendChild(doc);
+                        this.shadowRoot?.append(node.content);
                     }
                 }
             }
@@ -171,24 +189,33 @@ class Mfe extends HTMLElement {
         }
     }
 
-    private buildFragment(html: string) {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        if(this.shadowRoot){
-            this.shadowRoot.innerHTML = "";
+    createSafeHtml(html:string) {
+        const fragment = document.createElement('template');
+        if('setHTML' in Element.prototype){
+            (fragment as any).setHTML(html, { sanitizer: {
+                elements: Mfe.ALLOWED_ELEMENTS
+            }});
+        }else{
+            // here I could use the escape policy to sanitize the string or I could use DOMPurify or a similar library to sanitize the string before setting it as innerHTML
+            // and support older browsers
+            fragment.setHTMLUnsafe(html);
         }
-        const fragment = document.createDocumentFragment();
+        return fragment;
+    }
+
+    private buildFragment(html: string) {
+        if(this.shadowRoot){
+            this.shadowRoot.replaceChildren();
+        }
+        const fragment = this.createSafeHtml(html);
         const link = document.createElement('link');
         if(this.mfeStylingUrl){
             link.setAttribute('rel', 'stylesheet');
             link.setAttribute('href', this.mfeStylingUrl);
-            fragment.append(link);
         }
-        doc.body.childNodes.forEach(child => {
-            fragment.append(child)
-        });
-
-        return this.shadowRoot?.appendChild(fragment);
+        // the idea here is to use shadowRoot.setHTML but its supported only by firefox so far.
+        this.shadowRoot?.append(fragment.content);
+        this.shadowRoot?.appendChild(link);
     }
 
     public triggerEvent(
@@ -209,7 +236,7 @@ class Mfe extends HTMLElement {
     private reloadFragment(event:Event){
         if(event instanceof CustomEvent){
             this.mfeReady = false;
-            if(event.detail.payload.type === "reload"){
+            if(event.detail.payload.type === MfcEventType.RELOAD){
                 this.loadFragment();
             }
         }else{
@@ -235,6 +262,7 @@ class Mfe extends HTMLElement {
             });
         }
     }
+
 
     disconnectedCallback() {
         this.cleanupWindowListeners();

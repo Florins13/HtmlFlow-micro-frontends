@@ -3,9 +3,9 @@ console.log("Loading script of mfe3!")
 const mfeTriggerBikeEvent = "triggerBikeEvent";
 const mfeTriggerCartEvent = "triggerCartEvent";
 
-mfe("mfe3", ({triggerMfeEvent, listenMfeEvent})=> {
+mfe("mfe3", ({triggerMfeEvent, listenMfeEvent, mfeEvents})=> {
     listenMfeEvent(() => {
-        triggerMfeEvent('trigger bike event', {type: 'reload'}, mfeTriggerBikeEvent);
-        triggerMfeEvent('trigger cart event', {type: 'reload'}, mfeTriggerCartEvent);
+        triggerMfeEvent('trigger bike event', {type: mfeEvents.RELOAD}, mfeTriggerBikeEvent);
+        triggerMfeEvent('trigger cart event', {type: mfeEvents.RELOAD}, mfeTriggerCartEvent);
     });
 })
