@@ -17,7 +17,7 @@ enum MfcEventType {
 }
 
 class Mfe extends HTMLElement {
-    public mfeReady: boolean = false;
+    private mfeReady: boolean = false;
     private mfeName: string | null = "";
     private mfeUrlResource: string | null = "";
     private mfeListeningEventName: string | null = "";
@@ -29,6 +29,7 @@ class Mfe extends HTMLElement {
     private bindReload = this.reloadFragment.bind(this); // prevent new reference
     private static registry = new Map<string, Mfe>();
     private static pendingCallBacks = new Map<string, ((mfeRoot: MfeContext)=>void)[]>();
+    private static mfeEventBus = new EventTarget();
     private static readonly ALLOWED_ELEMENTS: string[] = [
         // Structural / sectioning
         'div', 'span', 'main', 'section', 'article', 'aside', 'nav', 'header', 'footer',
@@ -54,7 +55,7 @@ class Mfe extends HTMLElement {
 
     private cleanupWindowListeners() {
         this.windowListeners.forEach(({ eventName, handler }) => {
-            window.removeEventListener(eventName, handler);
+            Mfe.mfeEventBus.removeEventListener(eventName, handler);
         });
         this.windowListeners = [];
     }
@@ -73,7 +74,7 @@ class Mfe extends HTMLElement {
         this.isMfeStreamingData = this.getAttribute("mfe-stream-data");
         if (this.mfeListeningEventName) {
             console.log(this.mfeListeningEventName);
-            window.addEventListener(this.mfeListeningEventName, this.bindReload);
+            Mfe.mfeEventBus.addEventListener(this.mfeListeningEventName, this.bindReload);
         }
 
         if(!this.mfeUrlResource){
@@ -108,7 +109,7 @@ class Mfe extends HTMLElement {
         if(this.mfeReady && this.shadowRoot){
             callBackFn(this.createContext(this.shadowRoot));
         }
-        else this.addEventListener(this.mfeName + this.readyEventSuffix, () => {
+        else Mfe.mfeEventBus.addEventListener(this.mfeName + this.readyEventSuffix, () => {
             this.cleanupWindowListeners();
             callBackFn(this.createContext(this.shadowRoot))
         });
@@ -120,11 +121,10 @@ class Mfe extends HTMLElement {
             root,
             triggerMfeEvent: (message: string, payload: unknown, eventName: string) => this.triggerEvent(eventName ?? this.mfeTriggerEventName, message, payload),
             listenMfeEvent: (listener, eventName) => {
-                const name = eventName ?? this.mfeListeningEventName;
-                // register on window
-                window.addEventListener(name, listener);
+                const evName = eventName ?? this.mfeListeningEventName;
+                Mfe.mfeEventBus.addEventListener(evName, listener);
                 // track it so we can remove it on next reload
-                this.windowListeners.push({eventName: name, handler: listener});
+                this.windowListeners.push({eventName: evName, handler: listener});
             },
             reloadMfe: () => this.reloadFragment(new CustomEvent("reload", { detail: { payload: {type: MfcEventType.RELOAD }} })),
             mfeEvents: MfcEventType
@@ -221,16 +221,12 @@ class Mfe extends HTMLElement {
     public triggerEvent(
         eventName: string,
         message: string,
-        payload: unknown,
-        bubbles: boolean = true,
-        composed: boolean = true
+        payload: unknown
     ): void {
         const event = new CustomEvent(eventName, {
-            detail: { message, payload },
-            bubbles,
-            composed
+            detail: { message, payload }
         });
-        this.dispatchEvent(event); // the target is the microfrontend isntead of window, composed true allows for this.
+        Mfe.mfeEventBus.dispatchEvent(event); // the target is the microfrontend isntead of window, composed true allows for this.
     }
 
     private reloadFragment(event:Event){
@@ -254,7 +250,7 @@ class Mfe extends HTMLElement {
                     this.buildFragment(r);
                     this.mfeReady = true;
                     console.log("eventname: ", this.mfeName + this.readyEventSuffix)
-                    this.dispatchEvent(new Event(this.mfeName + this.readyEventSuffix, { bubbles: true, composed: true }));
+                    Mfe.mfeEventBus.dispatchEvent(new Event(this.mfeName + this.readyEventSuffix));
                 }
             }).catch(err => {
                 this.shadowRoot?.appendChild(document.createTextNode(`Failed to fetch: ${this.mfeName}`));
@@ -267,7 +263,7 @@ class Mfe extends HTMLElement {
     disconnectedCallback() {
         this.cleanupWindowListeners();
         console.log(`MFE -> ${this.mfeName} removed from page.`);
-        if(this.mfeListeningEventName) window.removeEventListener(this.mfeListeningEventName, this.bindReload);
+        if(this.mfeListeningEventName) Mfe.mfeEventBus.removeEventListener(this.mfeListeningEventName, this.bindReload);
         this.abortController?.abort();
     }
 
