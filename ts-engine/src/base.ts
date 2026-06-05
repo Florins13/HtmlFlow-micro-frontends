@@ -279,6 +279,12 @@ class Mfe extends HTMLElement {
         //     this.loadFragment();
         // }
     }
+
+    // a different way
+    public mfe(name:string, callback: (mfeContext: MfeContext) => void) {
+        Mfe.onReady(name, callback);
+    }
+
 }
 
 window.customElements.define('micro-frontend', Mfe);
