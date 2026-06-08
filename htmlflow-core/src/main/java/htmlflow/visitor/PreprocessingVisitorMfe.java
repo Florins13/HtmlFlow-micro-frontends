@@ -87,8 +87,15 @@ public class PreprocessingVisitorMfe extends PreprocessingVisitor {
             if (scriptSrc != null && !scriptSrc.isEmpty()) {
                 scriptTags
                     .append("<script type=\"module\" src=\"")
-                    .append(scriptSrc)
-                    .append("\"></script>");
+                    .append(scriptSrc).append("\"");
+
+                final String integrity = mfeConfig.getMfeScriptIntegrity();
+                if (integrity != null && !integrity.isEmpty()) {
+                    scriptTags.append(" integrity=\"").append(integrity).append("\"")
+                            .append(" crossorigin=\"anonymous\"");
+                }
+
+                scriptTags.append("\"></script>");
             }
         }
 

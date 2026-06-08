@@ -33,8 +33,8 @@
         <!-- Xsd2Poet is dedicated to generate a fluent java DSL based on a XSD file -->
         <dependency>
             <groupId>com.github.xmlet</groupId>
-            <artifactId>xsd2poet</artifactId>
-            <version>${com.github.xmlet.xsd2poet.version}</version>
+            <artifactId>xsd2poet-java</artifactId>
+            <version>1.0.9-SNAPSHOT</version>
         </dependency>
 
         <!-- Test dependencies -->

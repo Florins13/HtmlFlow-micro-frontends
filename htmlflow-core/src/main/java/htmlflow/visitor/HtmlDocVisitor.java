@@ -28,6 +28,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import org.xmlet.htmlapifaster.Element;
 import org.xmlet.htmlapifaster.MfeConfiguration;
+import org.xmlet.htmlapifaster.MfeConfigurationBuilder;
 import org.xmlet.htmlapifaster.SuspendConsumer;
 import org.xmlet.htmlapifaster.async.AwaitConsumer;
 
@@ -62,7 +63,7 @@ public class HtmlDocVisitor extends HtmlVisitor {
     @Override
     public final <E extends Element> void visitMfe(
         E e,
-        Consumer<MfeConfiguration> mfeConfiguration
+        Consumer<MfeConfigurationBuilder> mfeConfiguration
     ) {
         throw new IllegalStateException(
             "Wrong use of mfe() in a static view! Use HtmlMfe class to create micro frontends."

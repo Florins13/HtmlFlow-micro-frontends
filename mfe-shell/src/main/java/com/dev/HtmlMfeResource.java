@@ -33,6 +33,7 @@ public class HtmlMfeResource {
                                     cfg.setMfeListeningEventName("triggerBikeEvent");
                                     cfg.setMfeTriggersEventName("triggerCartEvent");
                                     cfg.setMfeScriptUrl("http://localhost:8081/js/mfe-bikes.js");
+                                    cfg.setMfeScriptIntegrity("test123");
                                     cfg.setMfeStylingUrl("http://localhost:8081/css/style.css");
                                 }).__()
                             .div().addAttr("style", "width: 20%;border: red 1px solid; margin: 20px")
