@@ -6,14 +6,14 @@
                         class="btn btn-delete"
                         value="{cartItem.getId()}">X</button>
 
-                <h4>Model: {cartItem.getBike().getModel()}</h4>
+                <h4>Model: {cartItem.getModel()}</h4>
 
-                <img src="{cartItem.getBike().getImageSource()}" class="bike-img">
+                <img src="{cartItem.getImageSource()}" class="bike-img">
 
-                <span>Stock: {cartItem.getBike().getStock()}</span>
-                <span>Details: {cartItem.getBike().getDetails()}</span>
-                <span>Electric: {cartItem.getBike().isElectric()}</span>
-                <span>Price: {cartItem.getBike().getPrice()}€</span>
+                <span>Stock: {cartItem.getQuantity()}</span>
+                {!<span>Details: {cartItem.getDetails()}</span>!}
+                {!<span>Electric: {cartItem.isElectric()}</span>!}
+                <span>Price: {cartItem.getPrice()}€</span>
 
                 <div class="quantity-group">
                     <button id="decreaseQuantity"

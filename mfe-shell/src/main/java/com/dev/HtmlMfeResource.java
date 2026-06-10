@@ -10,7 +10,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-@Path("/mfe")
+@Path("/")
 public class HtmlMfeResource {
 
     @GET
@@ -19,50 +19,53 @@ public class HtmlMfeResource {
         HtmlView<?> mfe = HtmlFlow.ViewFactory.builder().mfeEnabled(true).build().view(( page -> {
             page.html()
                     .head()
-                    // Reference JS file in META-INF/resources/main.js
+                        .link().addAttr("rel", "stylesheet").addAttr("href", "http://localhost:8080/style.css").__()
                     .__()
-                        .body()
-                        .div().addAttr("style", "display: flex; justify-content: center;height: 100px;border: blue 1px solid;")
-                            .h1().dynamic((h1,model)-> h1.attrId("header-id")).text("Header -> Hello from HtmlFlow!").__()
+
+                    .body()
+                        .header().addAttr("class", "header_bar")
+                            .div().img().addAttr("src", "bicycle.png").addAttr("style", "cursor: pointer; height:70px; width:70px;" ).addAttr("alt", "Bike Image").__().__()
+                            .div().h1().text("Bicycles").__().__()
+                            .nav().addAttr("class", "nav-style")
+                                .div().img().addAttr("src", "shopping-cart.png").addAttr("alt", "Cart").__().__()
+                                .div().img().addAttr("src", "orders.png").addAttr("alt", "Orders").__().__()
+                                .div().img().addAttr("src", "logout.png").addAttr("alt", "Logout").__().__()
+                            .__()
                         .__()
-                        .div().addAttr("style", "display: flex;")
-                            .div().addAttr("style", "width: 75%;border: black 1px solid; margin: 20px")
+
+                        .div().addAttr("style", "display: flex;justify-content: space-around;")
+                            .div().addAttr("style", "border: black 1px solid; margin: 4px")
                                 .mfe((cfg)-> {
-                                    cfg.setMfeUrlResource("http://localhost:8081/bikes");
+                                    cfg.setMfeUrlResource("http://localhost:8081/bikes/view");
                                     cfg.setMfeName("mfe1");
                                     cfg.setMfeListeningEventName("triggerBikeEvent");
                                     cfg.setMfeTriggersEventName("triggerCartEvent");
                                     cfg.setMfeScriptUrl("http://localhost:8081/js/mfe-bikes.js");
-                                    cfg.setMfeScriptIntegrity("test123");
+//                                    cfg.setMfeScriptIntegrity("test123");
                                     cfg.setMfeStylingUrl("http://localhost:8081/css/style.css");
                                 }).__()
-                            .div().addAttr("style", "width: 20%;border: red 1px solid; margin: 20px")
+                            .div().addAttr("style", "border: red 1px solid; margin: 4px")
                                 .mfe((cfg)-> {
-                                    cfg.setMfeUrlResource("http://localhost:8083/cart");
+                                    cfg.setMfeUrlResource("http://localhost:8082/cart/view");
                                     cfg.setMfeName("mfe2");
                                     cfg.setMfeListeningEventName("triggerCartEvent");
                                     cfg.setMfeTriggersEventName("triggerOrderEvent");
-                                    cfg.setMfeScriptUrl("http://localhost:8083/mfe-cart.js");
-                                    cfg.setMfeStylingUrl("http://localhost:8083/style.css");
+                                    cfg.setMfeScriptUrl("http://localhost:8082/mfe-cart.js");
+                                    cfg.setMfeStylingUrl("http://localhost:8082/style.css");
                                 }).__()
                         .__()
-                        .div()
-                            .div().addAttr("style", "border: green 1px solid; margin: 20px")
-                                .mfe((cfg)-> {
-                                    cfg.setMfeUrlResource("http://localhost:8084/order/history");
-                                    cfg.setMfeName("mfe3");
-                                    cfg.setMfeListeningEventName("triggerOrderEvent");
-                                    cfg.setMfeScriptUrl("http://localhost:8084/mfe-order.js");
-                                    cfg.setMfeStylingUrl("");
-                                }).__()
-                        .__()
-                    .div().addAttr("style", "display: flex; justify-content: center;height: 50px;border: yellow 1px solid;")
-                        .div().mfe((cfg)-> {
-                                    cfg.setMfeUrlResource("http://localhost:8080/html-chunked/stream");
-                                    cfg.setMfeName("mfe4");
-                                    cfg.setMfeListeningEventName("triggerStreamEvent");
-                                    cfg.setMfeStreamingData(true);
-                        }).__()
+//                        .div()
+//                            .div().addAttr("style", "border: green 1px solid; margin: 20px")
+//                                .mfe((cfg)-> {
+//                                    cfg.setMfeUrlResource("http://localhost:8083/order/history/view");
+//                                    cfg.setMfeName("mfe3");
+//                                    cfg.setMfeListeningEventName("triggerOrderEvent");
+//                                    cfg.setMfeScriptUrl("http://localhost:8083/mfe-order.js");
+//                                    cfg.setMfeStylingUrl("");
+//                                }).__()
+//                        .__()
+                    .footer().addAttr("class", "footer")
+                        .h3().text("© 2026 UAB Rental Service").__()
                     .__()
                     .__()
                     .__();
@@ -71,5 +74,47 @@ public class HtmlMfeResource {
         String html = mfe.render();
         return Response.ok(html).build();
 
+    }
+
+    @GET
+    @Path("/checkout")
+    @Produces(MediaType.TEXT_HTML)
+    public Response getCheckoutView(){
+        HtmlView<?> checkoutView = HtmlFlow.ViewFactory.builder().mfeEnabled(true).build().view(( page -> {
+            page.html()
+                    .head()
+                        .link().addAttr("rel", "stylesheet").addAttr("href", "http://localhost:8080/style.css").__()
+                    .__()
+
+                    .body()
+                        .header().addAttr("class", "header_bar")
+                            .div().img().addAttr("src", "bicycle.png").addAttr("style", "cursor: pointer; height:70px; width:70px;" ).addAttr("alt", "Bike Image").__().__()
+                            .div().h1().text("Bicycles").__().__()
+                            .nav().addAttr("class", "nav-style")
+                                .div().img().addAttr("src", "shopping-cart.png").addAttr("alt", "Cart").__().__()
+                                .div().img().addAttr("src", "orders.png").addAttr("alt", "Orders").__().__()
+                                .div().img().addAttr("src", "logout.png").addAttr("alt", "Logout").__().__()
+                        .__()
+                    .__()
+
+
+                    .div()
+                        .mfe((cfg)-> {
+                            cfg.setMfeUrlResource("http://localhost:8083/order/checkout/view");
+                            cfg.setMfeName("mfe3");
+                            cfg.setMfeListeningEventName("");
+                            cfg.setMfeTriggersEventName("");
+                            cfg.setMfeScriptUrl("http://localhost:8083/mfe-order.js");
+                            })
+                    .__()
+                    .footer().addAttr("class", "footer")
+                        .h3().text("© 2026 UAB Rental Service").__()
+                    .__()
+                    .__()
+                    .__();
+        }));
+
+        String html = checkoutView.render();
+        return Response.ok(html).build();
     }
 }

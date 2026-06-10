@@ -10,9 +10,9 @@ public class Bike {
     public boolean electric;
     public String imageSource;
     public String details;
-    public Integer stock;
+    public Integer availableStock;
     public BigDecimal price;
-    public boolean isInStock;
+    public boolean inStock;
 
 
     public Bike() {
@@ -42,8 +42,8 @@ public class Bike {
         return details;
     }
 
-    public Integer getStock() {
-        return stock;
+    public Integer getAvailableStock() {
+        return availableStock;
     }
 
     public BigDecimal getPrice() {
@@ -51,6 +51,6 @@ public class Bike {
     }
 
     public boolean isInStock() {
-        return isInStock;
+        return inStock;
     }
 }

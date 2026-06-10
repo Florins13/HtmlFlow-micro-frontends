@@ -33,7 +33,7 @@ mfe('mfe2', ({ root, triggerMfeEvent, listenMfeEvent, reloadMfe, mfeEvents }) =>
 });
 
 async function makeApiCall({ endpoint, method = 'GET' }) {
-    const url = `http://localhost:8080${endpoint}`;
+    const url = `http://localhost:8086${endpoint}`;
     try {
         const response = await fetch(url, { method, headers: {} });
         if (!response.ok) {
@@ -55,7 +55,7 @@ async function handleQuantity(type, id) {
 }
 
 async function deleteItem(id) {
-    await makeApiCall({ endpoint: `/cart/deleteItem/${id}`, method: 'POST' });
+    await makeApiCall({ endpoint: `/cart/delete/${id}`, method: 'POST' });
 }
 
 async function addBikeToCart(id) {

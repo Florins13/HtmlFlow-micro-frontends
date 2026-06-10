@@ -8,5 +8,5 @@ RUN --mount=type=cache,target=/root/.m2 mvn clean package -DskipTests -Dquarkus.
 FROM eclipse-temurin:17-jre
 WORKDIR /app
 COPY --from=build /app/target/quarkus-app/ ./
-EXPOSE 8082
+EXPOSE 8080
 CMD ["java", "-jar", "quarkus-run.jar"]

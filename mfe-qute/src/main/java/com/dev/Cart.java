@@ -26,7 +26,7 @@ public class Cart {
     public Response getCart() {
         CartDTO cartDTO = cartClient.getCart();
         cartDTO.getCartItems().forEach(cartItemDto -> {
-            cartItemDto.getBike().setImageSource("http://localhost:8083/" + cartItemDto.getBike().getImageSource());
+            cartItemDto.setImageSource("http://localhost:8083/" + cartItemDto.getImageSource());
         });
         return Response.ok(cart.data("cart", cartDTO).render()).build();
     };
