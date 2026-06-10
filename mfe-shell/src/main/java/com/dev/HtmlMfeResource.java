@@ -64,6 +64,7 @@ public class HtmlMfeResource {
                                     cfg.setMfeStreamingData(true);
                         }).__()
                     .__()
+                    .__()
                     .__();
         }));
 

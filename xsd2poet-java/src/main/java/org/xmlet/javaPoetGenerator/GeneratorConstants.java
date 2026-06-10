@@ -33,7 +33,10 @@ public class GeneratorConstants {
 
     public static final Set<String> specialTypes = Set.of("sizesType");
 
-    public static final String JAVA_ROOT_PATH = "./target/generated-sources";
+    // Use project.basedir system property so this resolves correctly whether
+    // building as a standalone module or as part of a multi-module reactor.
+    public static final String JAVA_ROOT_PATH =
+            System.getProperty("project.basedir", ".") + "/target/generated-sources";
 
     public static final String CLASS_PACKAGE = "org.xmlet.htmlapifaster";
 

@@ -41,4 +41,6 @@ public abstract class ElementVisitorBase {
     public abstract <E extends Element> void visitMfe(E element, Consumer<MfeConfigurationBuilder> data);
 
     public abstract <M, E extends Element> void visitAwait(E element, AwaitConsumer<E, M> asyncAction);
+
+    public abstract <M, E extends Element> void visitSuspending(E element, SuspendConsumer<E, M> suspendAction);
 }

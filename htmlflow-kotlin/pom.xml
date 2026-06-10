@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.github.xmlet</groupId>
         <artifactId>htmlflow-parent</artifactId>
-        <version>5.0.1</version>
+        <version>5.0.5-SNAPSHOT</version>
     </parent>
 
     <artifactId>htmlflow-kotlin</artifactId>
@@ -34,7 +34,7 @@
             <!-- HtmlFlow library purpose is to allow Java applications to easily writing HTML documents in a fluent style into a java.io.PrintStream. -->
             <groupId>com.github.xmlet</groupId>
             <artifactId>htmlflow</artifactId>
-            <version>5.0.1</version>
+            <version>5.0.5-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 

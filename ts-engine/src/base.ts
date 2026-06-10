@@ -30,6 +30,7 @@ class Mfe extends HTMLElement {
     private static registry = new Map<string, Mfe>();
     private static pendingCallBacks = new Map<string, ((mfeRoot: MfeContext)=>void)[]>();
     private static mfeEventBus = new EventTarget();
+    private static styleSheetCache = new Map<string, CSSStyleSheet>();
     private static readonly ALLOWED_ELEMENTS: string[] = [
         // Structural / sectioning
         'div', 'span', 'main', 'section', 'article', 'aside', 'nav', 'header', 'footer',
@@ -203,19 +204,31 @@ class Mfe extends HTMLElement {
         return fragment;
     }
 
+    private async loadStylesheet(url: string): Promise<CSSStyleSheet> {
+        const cached = Mfe.styleSheetCache.get(url);
+        if (cached) return cached;
+        const res = await fetch(url);
+        const css = await res.text();
+        const sheet = new CSSStyleSheet();
+        sheet.replaceSync(css);
+        Mfe.styleSheetCache.set(url, sheet);
+        return sheet;
+    }
+
     private buildFragment(html: string) {
         if(this.shadowRoot){
             this.shadowRoot.replaceChildren();
         }
         const fragment = this.createSafeHtml(html);
-        const link = document.createElement('link');
-        if(this.mfeStylingUrl){
-            link.setAttribute('rel', 'stylesheet');
-            link.setAttribute('href', this.mfeStylingUrl);
+        if (this.mfeStylingUrl && this.shadowRoot) {
+            this.loadStylesheet(this.mfeStylingUrl).then(cssSheet =>{
+                if(this.shadowRoot && cssSheet){
+                    this.shadowRoot.adoptedStyleSheets = [cssSheet];
+                }
+            }).catch(err => console.error(`Failed to load stylesheet for MFE -> ${this.mfeName}`, err));
         }
         // the idea here is to use shadowRoot.setHTML but its supported only by firefox so far.
         this.shadowRoot?.append(fragment.content);
-        this.shadowRoot?.appendChild(link);
     }
 
     public triggerEvent(

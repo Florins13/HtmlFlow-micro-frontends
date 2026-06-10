@@ -1,0 +1,566 @@
+package htmlflow.test
+
+import htmlflow.*
+import htmlflow.HtmlFlow.doc
+import htmlflow.test.model.Track
+import kotlinx.coroutines.reactive.asFlow
+import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertEquals
+import org.junit.Test
+import org.xmlet.htmlapifaster.*
+import reactor.core.publisher.Flux
+import java.lang.String.format
+import java.time.Duration
+import java.time.LocalDate
+import java.util.*
+
+/**
+ * These tests do not contain any assertion because they are only a sample for README.md
+ * and HtmlFlow site examples.
+ */
+class TestKotlinExtensionsOnPartials {
+
+    private fun testOpeningExampleOfReadme() {
+        System.out.doc {
+            html {
+                head {
+                    title { text("HtmlFlow") }
+                }
+                body  {
+                    div {
+                        attrClass("container")
+                        h1 { text("My first HtmlFlow page") }
+                        img { attrSrc("http://bit.ly/2MoHwrU") }
+                        p { text("Typesafe is awesome! :-)") }
+                    }
+                }// body
+            } //html
+        } // doc
+    }
+
+    /**
+     * Sample showcase of data binding with HtmlDoc
+     */
+    private fun Appendable.trackDoc(track: Track) {
+        doc {
+            html {
+                body {
+                    ul {
+                        li { text(format("Artist: %s", track.artist)) }
+                        li { text(format("Track: %s", track.name)) }
+                        if (track.diedDate != null) {
+                            li { text(format("Died in %d", track.diedDate.year)) }
+                        }
+                    } // ul
+                } // body
+            } // html
+        } // doc
+    }
+
+    /**
+     * Sample showcase of data binding with HtmlView
+     */
+    @Test
+    fun trackView() {
+        val trackView = view<Track> {
+            html {
+                body {
+                    ul {
+                        dyn { track: Track ->
+                            li { text(format("Artist: %s", track.artist)) }
+                            li { text(format("Track: %s", track.name)) }
+                            if (track.diedDate != null) {
+                                li { text(format("Died in %d", track.diedDate.year)) }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        val spaceOddity = Track("David Bowie", "Space Oddity", LocalDate.of(2016, 1, 10))
+        val actual = StringBuilder()
+        actual.trackDoc(spaceOddity)
+        assertEquals(actual.toString(), trackView.render(spaceOddity))
+//        trackView.setOut(System.out).write(spaceOddity);
+	}
+
+    /**
+     * Sample showcase of loop with HtmlDoc
+     */
+    private fun Appendable.playlistDoc(tracks: List<Track>) {
+        doc {
+            html {
+                body {
+                    table {
+                        tr {
+                            th { text("Artist") }
+                            th { text("Track") }
+                        }
+                        tracks.forEach { track ->
+                            tr { td { text(track.artist) } }
+                            tr { td { text(track.name) } }
+                        }
+                    } // table
+                } // body
+            } // html
+        } // doc
+    }
+
+    /**
+     * Sample showcase of loop with HtmlView
+     */
+    @Test
+    fun playlistView() {
+        val playlistView = view<List<Track>> {
+            html {
+                body {
+                    table {
+                        tr {
+                            th { text("Artist") }
+                            th { text("Track") }
+                        }
+                        dyn { tracks: List<Track> -> tracks
+                            .forEach { track ->
+                                tr { td { text(track.artist) } }
+                                tr { td { text(track.name) } }
+                            }
+                        }
+                    } // table
+                } // body
+            } // html
+        }
+        val tracks = listOf(
+            Track("David Bowie", "Space Oddity", LocalDate.of(2016, 1, 10)),
+            Track("U2", "Bad"),
+            Track("Queen", "Under Pressure")
+        )
+        val actual = StringBuilder()
+        actual.playlistDoc(tracks)
+        assertEquals(actual.toString(), playlistView.render(tracks))
+//        playlistView.setOut(System.out).write(tracks);
+    }
+    /**
+     * Sample showcase of loop with HtmlViewAsync
+     */
+    @Test
+    fun playlistViewAsync() {
+        val playlistView = viewAsync<Flux<Track>> {
+            html {
+                body {
+                    table {
+                        tr {
+                            th { text("Artist") }
+                            th { text("Track") }
+                        }
+                        await { tracks: Flux<Track>, resume -> tracks
+                            .doOnComplete(resume)
+                            .doOnNext{ track ->
+                                tr { td { text(track.artist) } }
+                                tr { td { text(track.name) } }
+                            }
+                        }
+                    } // table
+                } // body
+            } // html
+        }
+        val tracks = Arrays.asList(
+            Track("David Bowie", "Space Oddity", LocalDate.of(2016, 1, 10)),
+            Track("U2", "Bad"),
+            Track("Queen", "Under Pressure")
+        )
+        val tracksFlux = Flux
+            .fromIterable(tracks)
+            .delayElements(Duration.ofMillis(10))
+        val expected = StringBuilder()
+        expected.playlistDoc(tracks)
+        playlistView.renderAsync(tracksFlux).thenAccept { actual: String? ->
+            assertEquals(
+                expected.toString(),
+                actual
+            )
+        }
+    }
+    /**
+     * Sample showcase of loop with HtmlViewSuspend
+     */
+    @Test
+    fun playlistViewSuspend() {
+        val playlistView = viewSuspend<Flux<Track>> {
+            html {
+                body {
+                    table {
+                        tr {
+                            th { text("Artist") }
+                            th { text("Track") }
+                        }
+                        suspending { tracks: Flux<Track> -> tracks
+                            .asFlow()
+                            .collect { track ->
+                                tr { td { text(track.artist) } }
+                                tr { td { text(track.name) } }
+                            }
+                        }
+                    } // table
+                } // body
+            } // html
+        }
+        val tracks = Arrays.asList(
+            Track("David Bowie", "Space Oddity", LocalDate.of(2016, 1, 10)),
+            Track("U2", "Bad"),
+            Track("Queen", "Under Pressure")
+        )
+        val tracksFlux = Flux
+            .fromIterable(tracks)
+            .delayElements(Duration.ofMillis(10))
+        val expected = StringBuilder()
+        expected.playlistDoc(tracks)
+        runBlocking {
+            val actual = playlistView.render(tracksFlux)
+            assertEquals(
+                expected.toString(),
+                actual
+            )
+        }
+    }
+    private fun Div<*>.partialInputField(label: String, id: String, value: Any) {
+        div {
+            attrClass("form-group")
+            label { text(label) }
+            input {
+                attrClass("form-control")
+                attrType(EnumTypeInputType.TEXT)
+                attrId(id)
+                attrName(id)
+                attrValue(value.toString())
+            } // input
+        } // div
+    }
+    private fun Div<*>.partialOwner() {
+        h2 { text("Owner") }
+        form {
+            attrMethod(EnumMethodType.POST)
+            div {
+                attrClass("form-group has-feedback")
+                dyn { owner: Owner ->
+                    partialInputField("Name", "name", owner.name)
+                    partialInputField("Address", "address", owner.address)
+                }
+            } // div
+        } // form
+    }
+    private fun navbarFragment(nav: Nav<*>) {
+
+    }
+
+    private fun ownerView(navbar: (Nav<*>) -> Unit, content: Div<*>.() -> Unit): HtmlView<Owner> {
+        return view<Owner> {
+            html {
+                head {
+                    title { text("PetClinic :: a Spring Framework demonstration") }
+                    link { attrRel(EnumRelType.STYLESHEET).attrHref("/resources/css/petclinic.css") }
+                }
+                body {
+                    nav { navbar(this) }
+                    div {
+                        attrClass("container xd-container")
+                        content(this)
+                    } // div
+                } // body
+            } // html
+        }
+    }
+
+    @Test fun testOwnerView() {
+        val view = ownerView(::navbarFragment) { partialOwner() }
+        // view.setOut(System.out).write(Owner("Ze Manel", "Rua da Alfandega"))
+    }
+
+	class Owner(val name: String, val address: String)
+
+	@Test
+	fun testThatDivElementCanBeUsedOnHtmlDocAndHtmlView() {
+		val mainMenuDoc =
+			StringBuilder()
+				.apply {
+					doc {
+						div {
+							attrId("main-menu")
+							a {
+								attrHref("/series")
+								text("My Series")
+							}
+							a {
+								attrHref("/movies")
+								text("My Movies")
+							}
+							a {
+								attrHref("/musics")
+								text("My Musics")
+							}
+						}
+					}
+				}.toString()
+
+		assertEquals(expectedMainMenuDoc, mainMenuDoc)
+
+		val favoriteMovies =
+			listOf(
+				Movie("Inception", "Christopher Nolan", 2010, "Sci-Fi"),
+				Movie("The Godfather", "Francis Ford Coppola", 1972, "Crime"),
+				Movie("Pulp Fiction", "Quentin Tarantino", 1994, "Crime"),
+			)
+
+		val favoriteMoviesView =
+			view<List<Movie>> {
+				div {
+					attrId("favorite-movies")
+					dyn { movies: List<Movie> ->
+						movies.forEach { movie ->
+							div {
+								p { text("Movie: ${movie.title}") }
+								p { text("Director: ${movie.director}") }
+								p { text("Release Year: ${movie.releaseYear}") }
+								p { text("Genre: ${movie.genre}") }
+							}
+						}
+					}
+				}
+			}.render(favoriteMovies)
+
+		assertEquals(expectedFavoriteMoviesView, favoriteMoviesView)
+	}
+
+	data class Movie(
+		val title: String,
+		val director: String,
+		val releaseYear: Int,
+		val genre: String,
+	)
+
+	@Test
+	fun testThatTrElementCanBeUsedOnHtmlDoc() {
+		val newAgentRow =
+			view<Agent>{
+						tr {
+							dyn { agent: Agent ->
+								td { text(agent.name) }
+								td { text(agent.email) }
+								td { text(agent.id) }
+							}
+						}
+			}.render(Agent("Agent Smith 0", "void0@null.org", "0"))
+
+		assertEquals(expectedAgentRow, newAgentRow)
+	}
+
+data class Agent(
+	val name: String,
+	val email: String,
+	val id: String,
+)
+	@Test
+	fun testThatSpanElementCanBeUsedOnHtmlView() {
+
+		val counter1 = Counter(0)
+		val counter2 = Counter(1)
+		val counterSpans =
+			StringBuilder()
+				.apply {
+					doc {
+						span {
+							text("The counter 1 has the value ${counter1.count}")
+						}
+						span {
+							text("The counter 2 has the value ${counter2.count}")
+						}
+					}
+				}.toString()
+
+		assertEquals(expectedCounterSpans, counterSpans)
+	}
+	data class Counter(val count: Int)
+
+    @Test
+    fun testThatTbodyElementCanBeUsedOnHtmlDocAndHtmlView(){
+        val agentsTableDoc =
+            StringBuilder()
+                .apply {
+                    doc {
+                        tbody {
+                            tr {
+                                td { text("James Bond") }
+                                td { text("bond@mi6.gov.uk") }
+                                td { text("007") }
+                            }
+                            tr {
+                                td { text("Ethan Hunt") }
+                                td { text("ehunt@imf.gov") }
+                                td { text("001") }
+                            }
+                        }
+                    }
+                }.toString()
+
+        assertEquals(expectedAgentsTableDoc, agentsTableDoc)
+
+        val agents = listOf(
+            Agent("Jason Bourne", "bourne@cia.gov", "002"),
+            Agent("Napoleon Solo", "solo@uncle.org", "003")
+        )
+
+        val agentsTableView =
+            view<List<Agent>> {
+                tbody {
+                    dyn { agents: List<Agent> ->
+                        agents.forEach { agent ->
+                            tr {
+                                td { text(agent.name) }
+                                td { text(agent.email) }
+                                td { text(agent.id) }
+                            }
+                        }
+                    }
+                }
+            }.render(agents)
+
+        assertEquals(expectedAgentsTableView, agentsTableView)
+    }
+
+}
+
+private const val expectedFavoriteMoviesView =
+	"""<div id="favorite-movies">
+	<div>
+		<p>
+			Movie: Inception
+		</p>
+		<p>
+			Director: Christopher Nolan
+		</p>
+		<p>
+			Release Year: 2010
+		</p>
+		<p>
+			Genre: Sci-Fi
+		</p>
+	</div>
+	<div>
+		<p>
+			Movie: The Godfather
+		</p>
+		<p>
+			Director: Francis Ford Coppola
+		</p>
+		<p>
+			Release Year: 1972
+		</p>
+		<p>
+			Genre: Crime
+		</p>
+	</div>
+	<div>
+		<p>
+			Movie: Pulp Fiction
+		</p>
+		<p>
+			Director: Quentin Tarantino
+		</p>
+		<p>
+			Release Year: 1994
+		</p>
+		<p>
+			Genre: Crime
+		</p>
+	</div>
+</div>"""
+
+private const val expectedMainMenuDoc =
+"""
+<div id="main-menu">
+	<a href="/series">
+		My Series
+	</a>
+	<a href="/movies">
+		My Movies
+	</a>
+	<a href="/musics">
+		My Musics
+	</a>
+</div>"""
+
+private const val expectedAgentRow =
+"""<tr>
+	<td>
+		Agent Smith 0
+	</td>
+	<td>
+		void0@null.org
+	</td>
+	<td>
+		0
+	</td>
+</tr>"""
+
+
+private val expectedCounterSpans =
+"""
+<span>
+	The counter 1 has the value 0
+</span>
+<span>
+	The counter 2 has the value 1
+</span>"""
+
+
+private const val expectedAgentsTableDoc =
+    """
+<tbody>
+	<tr>
+		<td>
+			James Bond
+		</td>
+		<td>
+			bond@mi6.gov.uk
+		</td>
+		<td>
+			007
+		</td>
+	</tr>
+	<tr>
+		<td>
+			Ethan Hunt
+		</td>
+		<td>
+			ehunt@imf.gov
+		</td>
+		<td>
+			001
+		</td>
+	</tr>
+</tbody>"""
+
+private const val expectedAgentsTableView =
+    """<tbody>
+	<tr>
+		<td>
+			Jason Bourne
+		</td>
+		<td>
+			bourne@cia.gov
+		</td>
+		<td>
+			002
+		</td>
+	</tr>
+	<tr>
+		<td>
+			Napoleon Solo
+		</td>
+		<td>
+			solo@uncle.org
+		</td>
+		<td>
+			003
+		</td>
+	</tr>
+</tbody>"""

@@ -23,14 +23,39 @@
                     <mainClass>org.xmlet.Main</mainClass>
                     <includeProjectDependencies>true</includeProjectDependencies>
                     <classpathScope>compile</classpathScope>
+                    <workingDirectory>${project.basedir}</workingDirectory>
+                    <systemProperties>
+                        <systemProperty>
+                            <key>project.basedir</key>
+                            <value>${project.basedir}</value>
+                        </systemProperty>
+                    </systemProperties>
                 </configuration>
                 <executions>
                     <execution>
                         <id>Generates htmlapifaster API</id>
-                        <phase>process-classes</phase>
+                        <phase>process-sources</phase>
                         <goals>
                             <goal>java</goal>
                         </goals>
+                    </execution>
+                    <!-- Restore the placeholder stubs after mvn clean so bootstrap-compile
+                         can find ElementVisitor/Element on the next build cycle. -->
+                    <execution>
+                        <id>restore-placeholder-stubs</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>git</executable>
+                            <arguments>
+                                <argument>restore</argument>
+                                <argument>--</argument>
+                                <argument>src/main/java/org/xmlet/htmlapifaster/Element.java</argument>
+                                <argument>src/main/java/org/xmlet/htmlapifaster/ElementVisitor.java</argument>
+                            </arguments>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -40,9 +65,29 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
                 <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
+                    <source>9</source>
+                    <target>9</target>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>default-compile</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>bootstrap-compile</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>java-compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -75,7 +120,7 @@
                 <executions>
                     <execution>
                         <id>add-generated-sources</id>
-                        <phase>process-classes</phase>
+                        <phase>process-sources</phase>
                         <goals>
                             <goal>add-source</goal>
                         </goals>
@@ -88,7 +133,6 @@
                 </executions>
             </plugin>
 
-            <!-- Delete conflicting sources from src/main/java -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
@@ -96,62 +140,40 @@
                 <executions>
                     <execution>
                         <id>clean-conflicting-sources</id>
-                        <phase>process-classes</phase>
+                        <phase>process-sources</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>
                         <configuration>
                             <target>
-                                <!-- Delete conflicting files from src/main/java -->
-                                <delete file="${project.basedir}/src/main/java/org/xmlet/htmlapifaster/Element.java" />
-                                <delete file="${project.basedir}/src/main/java/org/xmlet/htmlapifaster/ElementVisitor.java" />
+                                <!-- Delete the placeholder stubs from src/main/java once the real
+                                     generated versions are in target/generated-sources so that
+                                     java-compile doesn't see duplicate class definitions. -->
+                                <delete file="${project.basedir}/src/main/java/org/xmlet/htmlapifaster/Element.java" quiet="true" />
+                                <delete file="${project.basedir}/src/main/java/org/xmlet/htmlapifaster/ElementVisitor.java" quiet="true" />
                             </target>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
 
-            <!-- If we clean the project and delete the generated-sources then we should restore the former deleted files-->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>reset-specific-file</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>git</executable>
-                            <arguments>
-                                <argument>restore</argument>
-                                <argument>--</argument>
-                                <argument>src/main/java/org/xmlet/htmlapifaster/Element.java</argument>
-                                <argument>src/main/java/org/xmlet/htmlapifaster/ElementVisitor.java</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.6</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>
-                                sign
-                            </goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-gpg-plugin</artifactId>-->
+<!--                <version>1.6</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>sign-artifacts</id>-->
+<!--                        <phase>verify</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>-->
+<!--                                sign-->
+<!--                            </goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -173,25 +195,6 @@
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>central</publishingServerId>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
-                <executions>
-                    <execution>
-                        <id>compile</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <source>9</source>
-                    <target>9</target>
                 </configuration>
             </plugin>
 
@@ -284,13 +287,14 @@
             <groupId>com.github.xmlet</groupId>
             <artifactId>xsd2poet-core</artifactId>
             <version>1.0.9-SNAPSHOT</version>
-            <scope>provided</scope>
+            <!-- compile (not provided) so exec:java can find Parser on the classpath -->
         </dependency>
         <dependency>
             <groupId>com.squareup</groupId>
             <artifactId>javapoet</artifactId>
             <version>1.13.0</version>
-            <scope>provided</scope>
+            <!-- compile (not provided) so exec:java can find JavaFile etc. on the classpath -->
+            <!-- The jar-plugin <includes> filter still excludes these from the final jar -->
         </dependency>
     </dependencies>
 

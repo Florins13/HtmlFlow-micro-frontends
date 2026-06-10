@@ -5,13 +5,12 @@
     <parent>
         <groupId>com.github.xmlet</groupId>
         <artifactId>htmlflow-parent</artifactId>
-        <version>5.0.1</version>
+        <version>5.0.5-SNAPSHOT</version>
     </parent>
 
     <artifactId>htmlflow</artifactId>
     <packaging>jar</packaging>
     <name>${project.groupId}:${project.artifactId}</name>
-    <version>5.0.2-SNAPSHOT</version>
 
     <description>
         HtmlFlow library purpose is to allow Java applications to easily writing
@@ -34,6 +33,12 @@
         <dependency>
             <groupId>com.github.xmlet</groupId>
             <artifactId>xsd2poet-java</artifactId>
+            <version>1.0.9-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.xmlet</groupId>
+            <artifactId>xsd2poet-core</artifactId>
             <version>1.0.9-SNAPSHOT</version>
         </dependency>
 
@@ -99,6 +104,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
                 <executions>
                     <!-- Replacing default-compile as it is treated specially by maven -->
                     <execution>
