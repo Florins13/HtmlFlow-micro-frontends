@@ -41,7 +41,7 @@ public class HtmlMfeResource {
                                     cfg.setMfeListeningEventName("triggerBikeEvent");
                                     cfg.setMfeTriggersEventName("triggerCartEvent");
                                     cfg.setMfeScriptUrl("http://localhost:8081/js/mfe-bikes.js");
-//                                    cfg.setMfeScriptIntegrity("test123");
+                                    cfg.setMfeScriptIntegrity("test123");
                                     cfg.setMfeStylingUrl("http://localhost:8081/css/style.css");
                                 }).__()
                             .div().addAttr("style", "border: red 1px solid; margin: 4px")
@@ -54,16 +54,17 @@ public class HtmlMfeResource {
                                     cfg.setMfeStylingUrl("http://localhost:8082/style.css");
                                 }).__()
                         .__()
-//                        .div()
-//                            .div().addAttr("style", "border: green 1px solid; margin: 20px")
-//                                .mfe((cfg)-> {
-//                                    cfg.setMfeUrlResource("http://localhost:8083/order/history/view");
-//                                    cfg.setMfeName("mfe3");
-//                                    cfg.setMfeListeningEventName("triggerOrderEvent");
+                        .div()
+                            .div().addAttr("style", "border: green 1px solid; margin: 20px")
+                                .mfe((cfg)-> {
+                                    cfg.setMfeUrlResource("http://localhost:8081/bikes/stream");
+                                    cfg.setMfeName("mfe3");
+                                    cfg.setMfeListeningEventName("triggerSomeEvent");
+                                    cfg.setMfeStreamingData(true);
 //                                    cfg.setMfeScriptUrl("http://localhost:8083/mfe-order.js");
 //                                    cfg.setMfeStylingUrl("");
-//                                }).__()
-//                        .__()
+                                }).__()
+                        .__()
                     .footer().addAttr("class", "footer")
                         .h3().text("© 2026 UAB Rental Service").__()
                     .__()

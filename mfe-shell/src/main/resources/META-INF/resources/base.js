@@ -113,7 +113,7 @@ class Mfe extends HTMLElement {
     async fetchStreamData() {
         const decoder = new TextDecoder();
         if (this.shadowRoot) {
-            this.shadowRoot.innerHTML = "";
+            this.shadowRoot.replaceChildren();
         }
         if (this.mfeUrlResource) {
             const response = await fetch(this.mfeUrlResource);
@@ -172,18 +172,15 @@ class Mfe extends HTMLElement {
             this.shadowRoot.replaceChildren();
         }
         const fragment = this.createSafeHtml(html);
-        // const link = document.createElement('link');
         if (this.mfeStylingUrl && this.shadowRoot) {
-            const sheet = this.loadStylesheet(this.mfeStylingUrl);
-            sheet.then(s => {
-                if (this.shadowRoot && s) {
-                    this.shadowRoot.adoptedStyleSheets = [s];
+            this.loadStylesheet(this.mfeStylingUrl).then(cssSheet => {
+                if (this.shadowRoot && cssSheet) {
+                    this.shadowRoot.adoptedStyleSheets = [cssSheet];
                 }
             }).catch(err => console.error(`Failed to load stylesheet for MFE -> ${this.mfeName}`, err));
         }
         // the idea here is to use shadowRoot.setHTML but its supported only by firefox so far.
         this.shadowRoot?.append(fragment.content);
-        // this.shadowRoot?.appendChild(link);
     }
     triggerEvent(eventName, message, payload) {
         const event = new CustomEvent(eventName, {
