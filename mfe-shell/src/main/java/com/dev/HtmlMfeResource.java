@@ -54,17 +54,7 @@ public class HtmlMfeResource {
                                     cfg.setMfeStylingUrl("http://localhost:8082/style.css");
                                 }).__()
                         .__()
-                        .div()
-                            .div().addAttr("style", "border: green 1px solid; margin: 20px")
-                                .mfe((cfg)-> {
-                                    cfg.setMfeUrlResource("http://localhost:8081/bikes/stream");
-                                    cfg.setMfeName("mfe3");
-                                    cfg.setMfeListeningEventName("triggerSomeEvent");
-                                    cfg.setMfeStreamingData(true);
-//                                    cfg.setMfeScriptUrl("http://localhost:8083/mfe-order.js");
-//                                    cfg.setMfeStylingUrl("");
-                                }).__()
-                        .__()
+
                     .footer().addAttr("class", "footer")
                         .h3().text("© 2026 UAB Rental Service").__()
                     .__()
