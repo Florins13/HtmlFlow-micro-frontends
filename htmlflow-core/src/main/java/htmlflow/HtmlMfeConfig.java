@@ -14,6 +14,7 @@ public final class HtmlMfeConfig implements MfeConfiguration {
     private final String mfeScriptUrl;
     private final String mfeScriptIntegrity;
     private final String mfeStylingUrl;
+    private final String mfeSharedStylingUrl;
     private final boolean isMfeStreamingData;
 
     private HtmlMfeConfig(Builder builder) {
@@ -24,6 +25,7 @@ public final class HtmlMfeConfig implements MfeConfiguration {
         this.mfeElementName = builder.mfeElementName;
         this.mfeScriptUrl = builder.mfeScriptUrl;
         this.mfeStylingUrl = builder.mfeStylingUrl;
+        this.mfeSharedStylingUrl = builder.mfeSharedStylingUrl;
         this.mfeScriptIntegrity = builder.mfeScriptIntegrity;
         this.isMfeStreamingData = builder.isMfeStreamingData;
     }
@@ -35,6 +37,7 @@ public final class HtmlMfeConfig implements MfeConfiguration {
     @Override public String getMfeTriggerEventName()    { return mfeTriggersEventName; }
     @Override public String getMfeScriptUrl()           { return mfeScriptUrl; }
     @Override public String getMfeStylingUrl()          { return mfeStylingUrl; }
+    @Override public String getMfeSharedStylingUrl()    { return mfeSharedStylingUrl; }
     @Override public String getMfeScriptIntegrity()     { return mfeScriptIntegrity;}
     @Override public boolean isMfeStreamingData()       {return isMfeStreamingData;}
 
@@ -48,6 +51,7 @@ public final class HtmlMfeConfig implements MfeConfiguration {
         private String mfeScriptUrl;
         private String mfeScriptIntegrity;
         private String mfeStylingUrl;
+        private String mfeSharedStylingUrl;
         private boolean isMfeStreamingData;
 
         @Override public Builder setMfeUrlResource(String s)        { this.mfeUrlResource = s; return this; }
@@ -57,6 +61,7 @@ public final class HtmlMfeConfig implements MfeConfiguration {
         @Override public Builder setMfeElementName(String s)        { this.mfeElementName = s; return this; }
         @Override public Builder setMfeScriptUrl(String s)          { this.mfeScriptUrl = s; return this; }
         @Override public Builder setMfeStylingUrl(String s)         { this.mfeStylingUrl = s; return this; }
+        @Override public Builder setMfeSharedStylingUrl(String s)   { this.mfeSharedStylingUrl = s; return this; }
         @Override public Builder setMfeScriptIntegrity(String s)    { this.mfeScriptIntegrity = s; return this;}
         @Override public Builder setMfeStreamingData(boolean s)     { this.isMfeStreamingData = s; return this; }
 
@@ -67,6 +72,7 @@ public final class HtmlMfeConfig implements MfeConfiguration {
         @Override public String getMfeTriggerEventName()    { return mfeTriggersEventName; }
         @Override public String getMfeScriptUrl()           { return mfeScriptUrl; }
         @Override public String getMfeStylingUrl()          { return mfeStylingUrl; }
+        @Override public String getMfeSharedStylingUrl()    { return mfeSharedStylingUrl; }
         @Override public String getMfeScriptIntegrity()     { return mfeScriptIntegrity;}
         @Override public boolean isMfeStreamingData()       { return isMfeStreamingData; }
 

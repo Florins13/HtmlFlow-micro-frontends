@@ -253,6 +253,9 @@ public abstract class HtmlVisitor extends ElementVisitor {
         if (mfeConfig.getMfeStylingUrl() != null && !mfeConfig.getMfeStylingUrl().isEmpty()) {
             e.getVisitor().visitAttribute("mfe-styling-url", mfeConfig.getMfeStylingUrl());
         }
+        if (mfeConfig.getMfeSharedStylingUrl() != null && !mfeConfig.getMfeSharedStylingUrl().isEmpty()) {
+            e.getVisitor().visitAttribute("mfe-shared-styling-url", mfeConfig.getMfeSharedStylingUrl());
+        }
         if (mfeConfig.getMfeTriggerEventName() != null) {
             e.getVisitor().visitAttribute("mfe-trigger-event", mfeConfig.getMfeTriggerEventName());
         }

@@ -34,27 +34,37 @@ public class HtmlMfeResource {
                         .__()
 
                         .div().addAttr("style", "display: flex;justify-content: space-around;")
-                            .div().addAttr("style", "border: black 1px solid; margin: 4px")
+                            .div().addAttr("style", "border: green 2px solid; margin: 4px")
                                 .mfe((cfg)-> {
                                     cfg.setMfeUrlResource("http://localhost:8081/bikes/view");
                                     cfg.setMfeName("mfe1");
                                     cfg.setMfeListeningEventName("triggerBikeEvent");
                                     cfg.setMfeTriggersEventName("triggerCartEvent");
                                     cfg.setMfeScriptUrl("http://localhost:8081/js/mfe-bikes.js");
-                                    cfg.setMfeScriptIntegrity("test123");
-                                    cfg.setMfeStylingUrl("http://localhost:8081/css/style.css");
+//                                    cfg.setMfeScriptIntegrity("sha384-Tk2Yjg3YmYzMWNkZTdhMTFkM2FlNDg4ZjE3MzEzNTk3ZDlh");
+                                    cfg.setMfeStylingUrl("http://localhost:8088/css/style.css");
+                                    cfg.setMfeSharedStylingUrl("http://localhost:8080/shared-theme.css");
                                 }).__()
-                            .div().addAttr("style", "border: red 1px solid; margin: 4px")
+//                                    .mfe((cfg)-> {
+//                                        cfg.setMfeUrlResource("http://localhost:8081/bikes/stream");
+//                                        cfg.setMfeName("mfe1");
+//                                        cfg.setMfeListeningEventName("triggerBikeEvent");
+//                                        cfg.setMfeTriggersEventName("triggerCartEvent");
+//                                        cfg.setMfeStreamingData(true);
+//                                        cfg.setMfeScriptUrl("http://localhost:8081/js/mfe-bikes.js");
+//                                        cfg.setMfeStylingUrl("http://localhost:8081/css/style.css");
+//                                    }).__()
+                            .div().addAttr("style", "border: red 2px solid; margin: 4px")
                                 .mfe((cfg)-> {
                                     cfg.setMfeUrlResource("http://localhost:8082/cart/view");
                                     cfg.setMfeName("mfe2");
                                     cfg.setMfeListeningEventName("triggerCartEvent");
                                     cfg.setMfeTriggersEventName("triggerOrderEvent");
                                     cfg.setMfeScriptUrl("http://localhost:8082/mfe-cart.js");
-                                    cfg.setMfeStylingUrl("http://localhost:8082/style.css");
+//                                    cfg.setMfeStylingUrl("http://localhost:8082/style.css");
+//                                    cfg.setMfeSharedStylingUrl("http://localhost:8080/shared-theme.css");
                                 }).__()
                         .__()
-
                     .footer().addAttr("class", "footer")
                         .h3().text("© 2026 UAB Rental Service").__()
                     .__()
@@ -89,7 +99,7 @@ public class HtmlMfeResource {
                     .__()
 
 
-                    .div()
+                    .div().addAttr("style", "border: blue 2px solid; margin: 4px")
                         .mfe((cfg)-> {
                             cfg.setMfeUrlResource("http://localhost:8083/order/checkout/view");
                             cfg.setMfeName("mfe3");

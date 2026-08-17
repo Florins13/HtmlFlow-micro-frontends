@@ -4,8 +4,9 @@
   "main": "src/original_base.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:tsc": "npx tsc --outDir ../mfe-shell/src/main/resources/META-INF/resources",
-    "build:minified": "npx esbuild src/base.ts --bundle --minify --outfile=../mfe-shell/src/main/resources/META-INF/resources/base.js"
+    "typecheck": "npx tsc --noEmit",
+    "build:tsc": "npm run typecheck && npx esbuild src/base.ts --bundle --format=esm --outfile=../mfe-shell/src/main/resources/META-INF/resources/base.js",
+    "build:minified": "npx esbuild src/base.ts --bundle --minify --format=esm --outfile=../mfe-shell/src/main/resources/META-INF/resources/base.js"
   },
   "keywords": [],
   "author": "",

@@ -1,0 +1,94 @@
+<div style="display: flex;justify-content: space-around;"><div style="border: black 1px solid; margin: 4px"><micro-frontend mfe-url="http://localhost:8081/bikes/view" mfe-name="mfe1" mfe-styling-url="http://localhost:8081/css/style.css" mfe-trigger-event="triggerCartEvent" mfe-listen-event="triggerBikeEvent"><template shadowrootmode="open"><main style="padding: 20px;">
+    <div style="margin-bottom:10px">
+        <label for="search">Search</label>
+        <input id="search" type="text" placeholder="Search bikes...">
+    </div>
+
+    <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: space-evenly;">
+        <div class="bike__box">
+            <h4>Model: <span>CITY STAR ST 500</span></h4>
+            <img src="bike_one.jpg" height="70" width="70" alt="CITY STAR ST 500">
+            <span>Stock: <span>100</span></span>
+            <span>Details: <span>red, medium</span></span>
+            <span>Electric: <span>No</span></span>
+            <span>Price: <span>24.99</span>€</span>
+
+            <button mfe-id="1">Add to cart</button>
+        </div>
+        <div class="bike__box">
+            <h4>Model: <span>test</span></h4>
+            <img src="bike_two.jpg" height="70" width="70" alt="test">
+            <span>Stock: <span>5</span></span>
+            <span>Details: <span>black, short</span></span>
+            <span>Electric: <span>Yes</span></span>
+            <span>Price: <span>50.00</span>€</span>
+
+            <button mfe-id="2">Add to cart</button>
+        </div>
+        <div class="bike__box">
+            <h4>Model: <span>ROCK STAR FS 400</span></h4>
+            <img src="bike_three.jpg" height="70" width="70" alt="ROCK STAR FS 400">
+            <span>Stock: <span>12</span></span>
+            <span>Details: <span>red, medium</span></span>
+            <span>Electric: <span>No</span></span>
+            <span>Price: <span>115.50</span>€</span>
+
+            <button mfe-id="3">Add to cart</button>
+        </div>
+        <div class="bike__box">
+            <h4>Model: <span>ROCK STAR FS 500</span></h4>
+            <img src="bike_three.jpg" height="70" width="70" alt="ROCK STAR FS 500">
+            <span>Stock: <span>2</span></span>
+            <span>Details: <span>red, medium</span></span>
+            <span>Electric: <span>No</span></span>
+            <span>Price: <span>115.50</span>€</span>
+
+            <button mfe-id="4">Add to cart</button>
+        </div>
+    </div>
+</main>
+</template></micro-frontend></div><div style="border: red 1px solid; margin: 4px"><micro-frontend mfe-url="http://localhost:8082/cart/view" mfe-name="mfe2" mfe-styling-url="http://localhost:8082/style.css" mfe-trigger-event="triggerOrderEvent" mfe-listen-event="triggerCartEvent"><template shadowrootmode="open"><div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: space-evenly; width: 250px;">
+    Your Cart:
+    <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: space-evenly;">
+        <div class="bike__box">
+            <button id="deleteCartItem" style="width: 25px; align-self: end;" value="1">X</button>
+
+            <h4 style="text-align: center;">Model: CITY STAR ST 500</h4>
+
+            <img src="bike_one.jpg" height="70" width="70" alt="CITY STAR ST 500">
+
+            <span>Price: 24.99€</span>
+
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <button id="decreaseQuantity" value="1">-</button>
+                <p>15</p>
+                <button id="increaseQuantity" value="1">+</button>
+            </div>
+        </div>
+    </div>
+    <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: space-evenly;">
+        <div class="bike__box">
+            <button id="deleteCartItem" style="width: 25px; align-self: end;" value="2">X</button>
+
+            <h4 style="text-align: center;">Model: test</h4>
+
+            <img src="bike_two.jpg" height="70" width="70" alt="test">
+
+            <span>Price: 50.00€</span>
+
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <button id="decreaseQuantity" value="2">-</button>
+                <p>1</p>
+                <button id="increaseQuantity" value="2">+</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div style="display: flex; flex-direction: row; justify-content: center; gap: 5px;">
+        <h3>Total: 424.85 €</h3>
+        <button id="triggerOrder" style="height: 30px; align-self: center;">
+            Checkout
+        </button>
+    </div>
+</template></micro-frontend></div></div>
