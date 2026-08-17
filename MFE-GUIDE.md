@@ -13,6 +13,8 @@ This guide documents the `.mfe(...)` functionality currently implemented in this
 | Generated HTML attributes | `htmlflow-core/src/main/java/htmlflow/visitor/HtmlVisitor.java` |
 | Automatic `<head>` script injection | `htmlflow-core/src/main/java/htmlflow/visitor/PreprocessingVisitorMfe.java` |
 | Browser runtime source | `ts-engine/src/base.ts` |
+| Shared/own stylesheet loading + theme propagation | `ts-engine/src/theme-loader.ts` |
+| HTML sanitization allow-list | `ts-engine/src/html-sanitizer.ts` |
 | Built runtime served by the shell | `mfe-shell/src/main/resources/META-INF/resources/base.js` |
 | Companion script examples | `mfe-spring/.../mfe-bikes.js`, `mfe-qute/.../mfe-cart.js`, `mfe-htmlflow/.../mfe-order.js` |
 
@@ -112,7 +114,8 @@ For most users this is transparent, because `preEncoding` already defaults to `t
 | `setMfeTriggersEventName(String)` | No | Writes `mfe-trigger-event` and defines the default event used by `triggerMfeEvent` | Same empty-string caveat as above |
 | `setMfeScriptUrl(String)` | No | Injects a `<script type="module" src="..."></script>` tag into `<head>` | Not rendered as an element attribute |
 | `setMfeScriptIntegrity(String)` | No | Adds `integrity="..." crossorigin="anonymous"` to the injected script tag | Only matters when `mfeScriptUrl` is present |
-| `setMfeStylingUrl(String)` | No | Writes `mfe-styling-url` so the runtime loads CSS into the Shadow DOM | Empty string is ignored |
+| `setMfeStylingUrl(String)` | No | Writes `mfe-styling-url` so the runtime loads CSS into the Shadow DOM | Fragment-private stylesheet; empty string is ignored |
+| `setMfeSharedStylingUrl(String)` | No | Writes `mfe-shared-styling-url` so the runtime loads and adopts a shared theme into the Shadow DOM **and** onto the shell's own `document` | Use this for a theme shared across fragments and the shell; empty string is ignored |
 | `setMfeStreamingData(boolean)` | No | Writes `mfe-stream-data="true"` and switches the runtime to streaming mode | Streaming has lifecycle differences; see below |
 | `setMfeElementName(String)` | No | Changes the emitted custom tag name | Advanced option; the bundled runtime only registers `micro-frontend` |
 
@@ -132,6 +135,7 @@ The `.mfe(...)` call ultimately produces a custom element with attributes consum
   mfe-url="http://localhost:8081/bikes"
   mfe-name="bikes"
   mfe-styling-url="http://localhost:8081/css/style.css"
+  mfe-shared-styling-url="http://localhost:8080/shared-theme.css"
   mfe-trigger-event="cart-events"
   mfe-listen-event="reload-bikes">
 </micro-frontend>
@@ -151,7 +155,8 @@ Attribute behavior in the current implementation:
 | `mfe-name` | `setMfeName` | Runtime registry, ready lifecycle, loading/error labels | Unique logical fragment name on the page |
 | `mfe-listen-event` | `setMfeListeningEventName` | Runtime auto-reload subscription and `listenMfeEvent` default | Default incoming event name |
 | `mfe-trigger-event` | `setMfeTriggersEventName` | `triggerMfeEvent` default | Default outgoing event name |
-| `mfe-styling-url` | `setMfeStylingUrl` | `loadStylesheet` | Optional fragment-local stylesheet |
+| `mfe-styling-url` | `setMfeStylingUrl` | `adoptStyleSheets` | Optional fragment-private stylesheet |
+| `mfe-shared-styling-url` | `setMfeSharedStylingUrl` | `adoptStyleSheets` | Optional shared stylesheet, adopted by the fragment's Shadow DOM **and** the shell `document` |
 | `mfe-stream-data` | `setMfeStreamingData(true)` | `loadFragment` | Switches to streaming fetch path |
 
 There is intentionally **no** element attribute for the companion script URL or script integrity. Those affect `<head>` script injection, not the fragment tag itself.
@@ -228,7 +233,7 @@ The runtime behavior behind each property is:
 | `root` | Gives access to the fragment Shadow DOM | Query inside the fragment with `root?.querySelector(...)`; avoid querying the shell document |
 | `triggerMfeEvent(message, payload, eventName?)` | Emits a `CustomEvent` on the shared MFE event bus | If `eventName` is omitted, the runtime uses the current element's `mfe-trigger-event` |
 | `listenMfeEvent(listener, eventName?)` | Subscribes to the shared MFE event bus | If `eventName` is omitted, the runtime uses the current element's `mfe-listen-event` |
-| `reloadMfe()` | Refetches and rerenders the current fragment | Equivalent to a local reload event with payload `{ type: mfeEvents.RELOAD }` |
+| `reloadMfe()` | Refetches and rerenders the current fragment | Dispatches a `new MfeReloadEvent()` (`detail: { type: mfeEvents.RELOAD }`) directly to this fragment's own `reloadFragment` handler |
 | `mfeEvents.RELOAD` | Built-in event constant | Reserved by the runtime to mean "reload this fragment" |
 
 > The current TypeScript source types `eventName` as required, but the runtime implementation treats it as optional, and the shipped scripts rely on the omitted-argument behavior.
@@ -242,14 +247,14 @@ For the regular, non-streaming path, the runtime lifecycle is:
 3. It subscribes to its configured listen-event for built-in reload handling.
 4. It fetches `mfe-url`.
 5. It mounts the returned HTML into an **open Shadow DOM**.
-6. It loads and caches the optional stylesheet from `mfe-styling-url`.
+6. It loads and caches the optional stylesheets from `mfe-styling-url`/`mfe-shared-styling-url`, applying both to the fragment's shadow root (and propagating the shared one onto `document`).
 7. It marks itself ready and replays any queued `mfe(name, callback)` registrations.
 
 On reload, the runtime rebuilds the fragment and runs the callback again with the new Shadow DOM contents.
 
 The runtime also cleans up listeners registered through `listenMfeEvent(...)` before re-initializing the callback. That prevents listener stacking across reloads.
 
-### Event model
+### Event model (TODO)
 
 The current runtime uses a shared static `EventTarget` (`Mfe.mfeEventBus`) as the MFE event bus.
 
@@ -264,13 +269,6 @@ There are two event layers:
 1. **Your application payloads**
 2. **The built-in reload convention**
 
-The reload convention is special:
-
-```js
-{ type: mfeEvents.RELOAD }
-```
-
-If a fragment is configured to listen on a given event name and receives a `CustomEvent` whose `detail.payload.type === mfeEvents.RELOAD`, the runtime refetches that fragment automatically.
 
 Any other payload shape is application-defined and must be handled by companion scripts.
 
@@ -311,25 +309,29 @@ Each fragment is mounted under its own Shadow DOM root:
 
 ### Stylesheet loading
 
-If `mfe-styling-url` is present, the runtime:
+A fragment can declare two independent stylesheets:
 
-1. fetches the CSS
-2. creates a `CSSStyleSheet`
-3. applies it via `shadowRoot.adoptedStyleSheets`
-4. caches the stylesheet by URL
+- `mfe-styling-url` — private, adopted only into that fragment's own Shadow DOM.
+- `mfe-shared-styling-url` — a shared theme, adopted into the fragment's Shadow DOM **and** propagated onto the shell's own `document.adoptedStyleSheets`, so the shell and every fragment referencing the same URL render with a consistent theme.
 
-That cache means multiple fragments using the same stylesheet URL do not refetch it every time.
+Both are loaded through `theme-loader.ts`:
+
+1. `loadStylesheet(url)` fetches the CSS, parses it into a `CSSStyleSheet`, and caches the resulting promise keyed by URL, so multiple fragments (or the shell) requesting the same URL only trigger one network fetch/parse.
+2. The runtime's `adoptStyleSheets()` loads both URLs concurrently and independently — if one fails, it's logged and resolved to `null` so the other stylesheet still applies — then assigns the non-null results to `shadowRoot.adoptedStyleSheets`.
+3. When `mfe-shared-styling-url` is set, `adoptStylesheet(document, url)` additionally adopts that same cached sheet onto the shell document, guarding against inserting a duplicate if it's already present.
+
+Practical implication: give every fragment that should share a visual theme (and the shell itself, if it configures the same URL) the same `mfe-shared-styling-url` value; keep fragment-specific styling on `mfe-styling-url`.
 
 ### HTML sanitization
 
 Fetched HTML is not inserted directly with raw `innerHTML`.
 
-The runtime uses `createSafeHtml()`:
+The runtime uses `createSafeHtml()` (from `html-sanitizer.ts`):
 
-- if `Element.prototype.setHTML` exists, it uses the browser sanitizer with the allowlist from `Mfe.ALLOWED_ELEMENTS`
+- if `Element.prototype.setHTML` exists, it uses the browser sanitizer with the allowlist exported as `ALLOWED_ELEMENTS`
 - otherwise it falls back to `setHTMLUnsafe(...)`
 
-Practical note: if a fragment depends on unusual tags or custom elements, review the allowlist in `ts-engine/src/base.ts`.
+Practical note: if a fragment depends on unusual tags or custom elements, review the allowlist in `ts-engine/src/html-sanitizer.ts`.
 
 ## Streaming fragments
 
@@ -339,17 +341,18 @@ If you call:
 cfg.setMfeStreamingData(true);
 ```
 
-HtmlFlow emits `mfe-stream-data="true"` and the runtime uses `fetchStreamData()` instead of the normal `fetchData()` path.
+HtmlFlow emits `mfe-stream-data="true"` and the runtime uses `fetchStreamData()` instead of the normal `fetchData()` + `buildFragment()` path.
 
-The current streaming path is intended for progressively appended markup, including `data-stream` markers.
+The streaming path renders chunks as they arrive, using `<slot>` elements to control where fallback content lands:
 
-Current caveats:
+1. The first decoded chunk that contains a `<slot>` element is treated as the container markup and appended directly to the shadow root as-is. This chunk must include any `<slot name="x">` placeholders that later chunks target.
+2. Each subsequent chunk is inspected for a `[slot]` attribute:
+   - if present, it's appended as that slot's fallback content, looked up via `shadowRoot.querySelector('slot[name="x"]')` (not native slot *assignment*, since nothing is placed in light DOM — only inside the shadow root itself).
+   - if absent, it's appended directly to the shadow root.
+3. Once the stream completes, the fragment is marked ready and its "fragment ready" event is dispatched — the same lifecycle event used by `window.mfe(...)` in the non-streaming path.
+4. If the fetch fails, a visible `"Failed to fetch: <name>"` text node is appended to the shadow root and the error is logged.
 
-- it does **not** currently mark the fragment as ready in the same way as the regular path
-- it does **not** dispatch the fragment-ready lifecycle event used by `window.mfe(...)`
-- it does **not** use the same abort/reload behavior as the regular path
-
-In practice, today the companion-script lifecycle is designed primarily around the non-streaming path.
+Practical implication: a streamed fragment's HTML must be authored around a container chunk containing named `<slot>` placeholders, with later chunks tagged `slot="..."` to fill them in as they arrive — this is what lets the shell start rendering the fragment's shell/skeleton before all the data is in.
 
 ## Demo applications in this repository
 
@@ -456,7 +459,7 @@ However, the shell module itself still contains a `quarkus.http.port=8080` setti
 | The custom tag renders but never upgrades | `setMfeElementName(...)` changed the tag name, but only `micro-frontend` is registered by the bundled runtime | Either keep the default tag name or register a compatible custom element yourself |
 | `base.js` is missing | The runtime script path is hardcoded to `base.js` during preprocessing | Ensure the shell serves `base.js` from a path that resolves from the composed page |
 | Shell demo URLs return 404 | `HtmlMfeResource` still references older `/view` routes and inconsistent ports | Use the module routes documented in this guide instead |
-| Styles do not apply inside the fragment | The CSS was not provided through `mfe-styling-url` | Remember that ordinary shell CSS does not cross the Shadow DOM boundary |
+| Styles do not apply inside the fragment | The CSS was not provided through `mfe-styling-url`/`mfe-shared-styling-url` | Remember that ordinary shell CSS does not cross the Shadow DOM boundary |
 
 ## Summary
 
