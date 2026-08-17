@@ -42,7 +42,7 @@ public class HtmlMfeResource {
                                     cfg.setMfeTriggersEventName("triggerCartEvent");
                                     cfg.setMfeScriptUrl("http://localhost:8081/js/mfe-bikes.js");
 //                                    cfg.setMfeScriptIntegrity("sha384-Tk2Yjg3YmYzMWNkZTdhMTFkM2FlNDg4ZjE3MzEzNTk3ZDlh");
-                                    cfg.setMfeStylingUrl("http://localhost:8088/css/style.css");
+                                    cfg.setMfeStylingUrl("http://localhost:8081/css/style.css");
                                     cfg.setMfeSharedStylingUrl("http://localhost:8080/shared-theme.css");
                                 }).__()
 //                                    .mfe((cfg)-> {
@@ -61,8 +61,8 @@ public class HtmlMfeResource {
                                     cfg.setMfeListeningEventName("triggerCartEvent");
                                     cfg.setMfeTriggersEventName("triggerOrderEvent");
                                     cfg.setMfeScriptUrl("http://localhost:8082/mfe-cart.js");
-//                                    cfg.setMfeStylingUrl("http://localhost:8082/style.css");
-//                                    cfg.setMfeSharedStylingUrl("http://localhost:8080/shared-theme.css");
+                                    cfg.setMfeStylingUrl("http://localhost:8082/style.css");
+                                    cfg.setMfeSharedStylingUrl("http://localhost:8080/shared-theme.css");
                                 }).__()
                         .__()
                     .footer().addAttr("class", "footer")
